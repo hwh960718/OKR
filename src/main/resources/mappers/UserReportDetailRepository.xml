@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobvista.okr.repository.UserReportDetailRepository">
+    <resultMap id="BaseResultMap" type="com.mobvista.okr.domain.UserReportDetail">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="report_id" jdbcType="BIGINT" property="reportId"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="assess_task_id" jdbcType="BIGINT" property="assessTaskId"/>
+        <result column="report_user_id" jdbcType="BIGINT" property="reportUserId"/>
+        <result column="verify_user_id" jdbcType="BIGINT" property="verifyUserId"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="verify_date" jdbcType="TIMESTAMP" property="verifyDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, report_id, assess_task_id, report_user_id, verify_user_id, status, create_date, 
+    verify_date
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_report_detail
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="findByAssessTaskIdAndReportUserId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_report_detail where assess_task_id = #{assessTaskId} and report_user_id = #{reportUserId}
+    </select>
+    <select id="findAllByStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_report_detail where `status` = #{status}
+    </select>
+    <select id="findAllByAssessTaskIdIn" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_report_detail where assess_task_id IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="queryCountPage" resultType="java.lang.Long">
+        SELECT count(1)
+        FROM user_report_detail urd
+        INNER JOIN user_profile u1 ON urd.report_user_id = u1.id
+        LEFT JOIN user_profile u2 ON urd.verify_user_id = u2.id
+        INNER JOIN assess_task ast ON urd.assess_task_id = ast.id
+        INNER JOIN user_profile u3 ON ast.assessor_id = u3.id
+        <where>
+            <if test="userName !=null">
+                u1.real_name LIKE CONCAT('%',#{userName},'%')
+                or u2.real_name LIKE CONCAT('%',#{userName},'%')
+                or u3.real_name LIKE CONCAT('%',#{userName},'%')
+            </if>
+        </where>
+    </select>
+    <select id="queryPage" resultType="com.mobvista.okr.dto.UserReportDetailDTO">
+        SELECT urd.id,
+        u1.real_name reportUserName ,
+        u1.id reportUserId,
+        u2.real_name verifyUserName,
+        u2.id verifyUserId,
+        u3.real_name assessTaskUserName,
+        u3.id assessTaskId,
+        urd.status,
+        urd.content reportContent,
+        urd.create_date createDate,
+        urd.verify_date verifyDate,
+        s.title seasonTitle
+        FROM user_report_detail urd
+        INNER JOIN user_profile u1 ON urd.report_user_id = u1.id
+        LEFT JOIN user_profile u2 ON urd.verify_user_id = u2.id
+        INNER JOIN assess_task ast ON urd.assess_task_id = ast.id
+        INNER JOIN user_season us on us.id = ast.user_season_id
+        INNER JOIN season s on s.id = us.season_id
+        INNER JOIN user_profile u3 ON ast.assessor_id = u3.id
+        <where>
+            <if test="userName !=null">
+                u1.real_name LIKE CONCAT('%',#{userName},'%')
+                or u2.real_name LIKE CONCAT('%',#{userName},'%')
+                or u3.real_name LIKE CONCAT('%',#{userName},'%')
+            </if>
+        </where>
+        ORDER BY urd.status,urd.create_date desc
+        LIMIT #{start},#{size}
+    </select>
+    <select id="queryByIdListIn" resultType="com.mobvista.okr.dto.UserReportDetailDTO">
+        SELECT urd.id,
+        u1.real_name reportUserName ,
+        u1.id reportUserId,
+        u2.real_name verifyUserName,
+        u2.id verifyUserId,
+        u3.real_name assessTaskUserName,
+        u3.id assessTaskUserId,
+        urd.assess_task_id assessTaskId,
+        urd.status,
+        urd.create_date createDate,
+        urd.verify_date verifyDate
+        FROM user_report_detail urd
+        INNER JOIN user_profile u1 ON urd.report_user_id = u1.id
+        LEFT JOIN user_profile u2 ON urd.verify_user_id = u2.id
+        INNER JOIN assess_task ast ON urd.assess_task_id = ast.id
+        INNER JOIN user_profile u3 ON ast.assessor_id = u3.id
+        where urd.id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user_report_detail
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.mobvista.okr.domain.UserReportDetail">
+    insert into user_report_detail (id, report_id,content, assess_task_id,
+      report_user_id, verify_user_id, status, 
+      create_date, verify_date)
+    values (#{id,jdbcType=BIGINT}, #{reportId,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR}, #{assessTaskId,jdbcType=BIGINT},
+      #{reportUserId,jdbcType=BIGINT}, #{verifyUserId,jdbcType=BIGINT}, #{status,jdbcType=TINYINT}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{verifyDate,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="com.mobvista.okr.domain.UserReportDetail">
+        insert into user_report_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="reportId != null">
+                report_id,
+            </if>
+            <if test="assessTaskId != null">
+                assess_task_id,
+            </if>
+            <if test="reportUserId != null">
+                report_user_id,
+            </if>
+            <if test="verifyUserId != null">
+                verify_user_id,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="verifyDate != null">
+                verify_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="reportId != null">
+                #{reportId,jdbcType=BIGINT},
+            </if>
+            <if test="assessTaskId != null">
+                #{assessTaskId,jdbcType=BIGINT},
+            </if>
+            <if test="reportUserId != null">
+                #{reportUserId,jdbcType=BIGINT},
+            </if>
+            <if test="verifyUserId != null">
+                #{verifyUserId,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="verifyDate != null">
+                #{verifyDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <insert id="saveList">
+        insert into user_report_detail (id, report_id, assess_task_id,
+        report_user_id, verify_user_id, status,
+        create_date, verify_date)
+        values
+        <foreach collection="list" item="po" separator=",">
+            (#{po.id,jdbcType=BIGINT}, #{po.reportId,jdbcType=BIGINT}, #{po.assessTaskId,jdbcType=BIGINT},
+            #{po.reportUserId,jdbcType=BIGINT}, #{po.verifyUserId,jdbcType=BIGINT}, #{po.status,jdbcType=TINYINT},
+            #{po.createDate,jdbcType=TIMESTAMP}, #{po.verifyDate,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mobvista.okr.domain.UserReportDetail">
+        update user_report_detail
+        <set>
+            <if test="reportId != null">
+                report_id = #{reportId,jdbcType=BIGINT},
+            </if>
+            <if test="assessTaskId != null">
+                assess_task_id = #{assessTaskId,jdbcType=BIGINT},
+            </if>
+            <if test="reportUserId != null">
+                report_user_id = #{reportUserId,jdbcType=BIGINT},
+            </if>
+            <if test="verifyUserId != null">
+                verify_user_id = #{verifyUserId,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="verifyDate != null">
+                verify_date = #{verifyDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.mobvista.okr.domain.UserReportDetail">
+    update user_report_detail
+    set report_id = #{reportId,jdbcType=BIGINT},
+      assess_task_id = #{assessTaskId,jdbcType=BIGINT},
+      report_user_id = #{reportUserId,jdbcType=BIGINT},
+      verify_user_id = #{verifyUserId,jdbcType=BIGINT},
+      status = #{status,jdbcType=TINYINT},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      verify_date = #{verifyDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <update id="updateUserReportDetailStatusByIds">
+        update user_report_detail set status = #{status}
+        where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

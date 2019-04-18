@@ -1,0 +1,630 @@
+#获取所有请求URL的方法 AuthResource
+/api/u/getAllUrl
+调用时需要在MyWebAppConfigurer 排除次url拦截
+
+
+#当前url 统计(2018年05月10日)
+/api/u/account/search,/api/u/account/updateUserInfo,/api/u/account/getAccount,/api/u/account/getUserAuthorities,/api/u/account/updateFace,/api/u/account/searchAll,/api/u/adjuster/delete,/api/u/adjuster/create,/api/u/adjuster/list,/api/u/assessTask/underway,/api/u/assessTask/underwayCount,/api/u/assessTask/finished,/api/u/assessTask/subordinateAssessTaskList,/api/u/assessTask/getDetailForUserInfo,/api/u/assessTask/getDetailForUserSeason,/api/u/assessTask/getDetailForUserScore,/api/u/assessTask/getUserAllItemScore,/api/u/assessTask/makeScore,/api/u/menuList,/api/u/authenticate,/api/u/login,/api/u/getAllUrl,/api/u/logout,/api/u/callback,/api/u/department/getDepartmentTree,/api/u/department/getDepartmentTreeForLeader,/api/email/feedBack,/api/email/remindUnderwayAssessTaskUser,/api/init,/api/u/manual/makeTask,/api/u/manual/syncDept,/api/u/manual/syncUser,/api/u/manual/makeScore,/api/u/notice/delete,/api/u/notice/create,/api/u/notice/detail,/api/u/okr/update,/api/u/okr/delete,/api/u/okr/create,/api/u/okr/list,/api/u/scoreOption/all,/api/u/scoreOption/update,/api/u/scoreOption/list,/api/u/season/delete,/api/u/season/update,/api/u/season/create,/api/u/season/list,/api/u/season/rePublish,/api/u/season/getCurrentSeason,/api/u/season/getCurrentSeasons,/api/u/season/getAllYears,/api/u/season/getAllSeasonsByYear,/api/u/season/getUnFinishFilledOkrList,/api/u/season/getUnSelectedAssessorList,/api/u/season/getUnFinishAssessList,/api/u/season/publish,/api/u/season/detail,/api/u/statistics/getUserAssessCountTop10,/api/u/test/testAutoSeasonFinish,/api/u/upload/uploadFace,/api/u/userSeasonComment/create,/api/u/userSeasonComment/list,/api/u/userSeasonComment/top,/api/u/userSeason/list,/api/u/userSeason/assessStatusDataIsExist,/api/u/userSeason/getDetailForUserScoreItem,/api/u/userSeason/getDetailForAssessScoreList,/api/u/userSeason/getDetailForAssessScoreItems,/api/u/userSeason/getLastSeasonScoreItem,/api/u/userSeason/getRanking,/api/u/userSeason/getCompanyOkrOverview,/api/u/userSeason/makeOkr,/api/u/userSeason/getDetailForUserInfo,/api/u/userSeason/detail,/api/u/userSeasonTip/create,/api/u/userSeasonTip/getListByTaskId,/api/u/userSeasonTip/getListByUserSeasonId,/error,/error,
+
+
+ "/api/u/account/search",
+    "/api/u/account/updateUserInfo",
+    "/api/u/account/getAccount",
+    "/api/u/account/getUserAuthorities",
+    "/api/u/account/updateFace",
+    "/api/u/account/searchAll",
+    "/api/u/adjuster/delete",
+    "/api/u/adjuster/create",
+    "/api/u/adjuster/list",
+    "/api/u/assessTask/underway",
+    "/api/u/assessTask/underwayCount",
+    "/api/u/assessTask/finished",
+    "/api/u/assessTask/subordinateAssessTaskList",
+    "/api/u/assessTask/getDetailForUserInfo",
+    "/api/u/assessTask/getDetailForUserSeason",
+    "/api/u/assessTask/getDetailForUserScore",
+    "/api/u/assessTask/getUserAllItemScore",
+    "/api/u/assessTask/makeScore",
+    "/api/u/menuList",
+    "/api/u/authenticate",
+    "/api/u/login",
+    "/api/u/getAllUrl",
+    "/api/u/logout",
+    "/api/u/callback",
+    "/api/u/department/getDepartmentTree",
+    "/api/u/department/getDepartmentTreeForLeader",
+    "/api/email/feedBack",
+    "/api/email/remindUnderwayAssessTaskUser",
+    "/api/init",
+    "/api/u/manual/makeTask",
+    "/api/u/manual/syncDept",
+    "/api/u/manual/syncUser",
+    "/api/u/manual/makeScore",
+    "/api/u/notice/delete",
+    "/api/u/notice/create",
+    "/api/u/notice/detail",
+    "/api/u/okr/update",
+    "/api/u/okr/delete",
+    "/api/u/okr/create",
+    "/api/u/okr/list",
+    "/api/u/scoreOption/all",
+    "/api/u/scoreOption/update",
+    "/api/u/scoreOption/list",
+    "/api/u/season/delete",
+    "/api/u/season/update",
+    "/api/u/season/create",
+    "/api/u/season/list",
+    "/api/u/season/rePublish",
+    "/api/u/season/getCurrentSeason",
+    "/api/u/season/getCurrentSeasons",
+    "/api/u/season/getAllYears",
+    "/api/u/season/getAllSeasonsByYear",
+    "/api/u/season/getUnFinishFilledOkrList",
+    "/api/u/season/getUnSelectedAssessorList",
+    "/api/u/season/getUnFinishAssessList",
+    "/api/u/season/publish",
+    "/api/u/season/detail",
+    "/api/u/statistics/getUserAssessCountTop10",
+    "/api/u/test/testAutoSeasonFinish",
+    "/api/u/upload/uploadFace",
+    "/api/u/userSeasonComment/create",
+    "/api/u/userSeasonComment/list",
+    "/api/u/userSeasonComment/top",
+    "/api/u/userSeason/list",
+    "/api/u/userSeason/assessStatusDataIsExist",
+    "/api/u/userSeason/getDetailForUserScoreItem",
+    "/api/u/userSeason/getDetailForAssessScoreList",
+    "/api/u/userSeason/getDetailForAssessScoreItems",
+    "/api/u/userSeason/getLastSeasonScoreItem",
+    "/api/u/userSeason/getRanking",
+    "/api/u/userSeason/getCompanyOkrOverview",
+    "/api/u/userSeason/makeOkr",
+    "/api/u/userSeason/getDetailForUserInfo",
+    "/api/u/userSeason/detail",
+    "/api/u/userSeasonTip/create",
+    "/api/u/userSeasonTip/getListByTaskId",
+    "/api/u/userSeasonTip/getListByUserSeasonId",
+    "/error",
+    "/error"
+
+
+
+2018年05月22日：
+/api/u/account/search,/api/u/account/updateUserInfo,/api/u/account/getAccount,/api/u/account/getUserAuthorities,/api/u/account/updateFace,/api/u/account/searchAll,/api/u/adjuster/delete,/api/u/adjuster/create,/api/u/adjuster/list,/api/u/adjuster/importPreSeasonAdjuster,/api/u/assessTask/subordinateAssessTaskList,/api/u/assessTask/getDetailForUserInfo,/api/u/assessTask/getDetailForUserSeason,/api/u/assessTask/getDetailForUserScore,/api/u/assessTask/getUserAllItemScore,/api/u/assessTask/makeScore,/api/u/assessTask/underway,/api/u/assessTask/underwayCount,/api/u/assessTask/finished,/api/u/menuList,/api/u/logout,/api/u/authenticate,/api/u/login,/api/u/getAllUrl,/api/u/callback,/api/u/department/getDepartmentTree,/api/u/department/getDepartmentTreeForLeader,/api/email/remindUnderwayAssessTaskUser,/api/email/remindUnFinishFilledOKRUser,/api/email/feedBack,/api/init,/api/u/manual/syncUser,/api/u/manual/makeScore,/api/u/manual/makeTask,/api/u/manual/syncDept,/api/u/notice/delete,/api/u/notice/create,/api/u/notice/detail,/api/u/okr/update,/api/u/okr/delete,/api/u/okr/create,/api/u/okr/list,/api/u/scoreOption/list,/api/u/scoreOption/all,/api/u/scoreOption/update,/api/u/season/delete,/api/u/season/update,/api/u/season/create,/api/u/season/list,/api/u/season/detail,/api/u/season/publish,/api/u/season/getUnFinishFilledOkrList,/api/u/season/rePublish,/api/u/season/getCurrentSeason,/api/u/season/getCurrentSeasons,/api/u/season/getAllYears,/api/u/season/getAllSeasonsByYear,/api/u/season/getUnSelectedAssessorList,/api/u/season/getUnFinishAssessList,/api/u/statistics/getUserAssessCountTop10,/api/u/test/testAutoSeasonFinish,/api/u/upload/uploadFace,/api/u/userRank/getUserRankList,/api/u/userRank/updateWeightById,/api/u/userRank/getUserRankAdjusterCountList,/api/u/userRank/updateUserRankAdjusterCount,/api/u/userSeasonComment/create,/api/u/userSeasonComment/top,/api/u/userSeasonComment/list,/api/u/userSeason/detail,/api/u/userSeason/getDetailForUserInfo,/api/u/userSeason/list,/api/u/userSeason/assessStatusDataIsExist,/api/u/userSeason/getDetailForUserScoreItem,/api/u/userSeason/getDetailForAssessScoreList,/api/u/userSeason/getDetailForAssessScoreItems,/api/u/userSeason/getLastSeasonScoreItem,/api/u/userSeason/getRanking,/api/u/userSeason/getCompanyOkrOverview,/api/u/userSeason/makeOkr,/api/u/userSeasonTip/create,/api/u/userSeasonTip/getListByTaskId,/api/u/userSeasonTip/getListByUserSeasonId,/error,/error
+
+
+        "/api/u/account/search",
+        "/api/u/account/updateUserInfo",
+        "/api/u/account/getAccount",
+        "/api/u/account/getUserAuthorities",
+        "/api/u/account/updateFace",
+        "/api/u/account/searchAll",
+        "/api/u/adjuster/delete",
+        "/api/u/adjuster/create",
+        "/api/u/adjuster/list",
+        "/api/u/adjuster/importPreSeasonAdjuster",
+        "/api/u/assessTask/subordinateAssessTaskList",
+        "/api/u/assessTask/getDetailForUserInfo",
+        "/api/u/assessTask/getDetailForUserSeason",
+        "/api/u/assessTask/getDetailForUserScore",
+        "/api/u/assessTask/getUserAllItemScore",
+        "/api/u/assessTask/makeScore",
+        "/api/u/assessTask/underway",
+        "/api/u/assessTask/underwayCount",
+        "/api/u/assessTask/finished",
+        "/api/u/menuList",
+        "/api/u/logout",
+        "/api/u/authenticate",
+        "/api/u/login",
+        "/api/u/getAllUrl",
+        "/api/u/callback",
+        "/api/u/department/getDepartmentTree",
+        "/api/u/department/getDepartmentTreeForLeader",
+        "/api/email/remindUnderwayAssessTaskUser",
+        "/api/email/remindUnFinishFilledOKRUser",
+        "/api/email/feedBack",
+        "/api/init",
+        "/api/u/manual/syncUser",
+        "/api/u/manual/makeScore",
+        "/api/u/manual/makeTask",
+        "/api/u/manual/syncDept",
+        "/api/u/notice/delete",
+        "/api/u/notice/create",
+        "/api/u/notice/detail",
+        "/api/u/okr/update",
+        "/api/u/okr/delete",
+        "/api/u/okr/create",
+        "/api/u/okr/list",
+        "/api/u/scoreOption/list",
+        "/api/u/scoreOption/all",
+        "/api/u/scoreOption/update",
+        "/api/u/season/delete",
+        "/api/u/season/update",
+        "/api/u/season/create",
+        "/api/u/season/list",
+        "/api/u/season/detail",
+        "/api/u/season/publish",
+        "/api/u/season/getUnFinishFilledOkrList",
+        "/api/u/season/rePublish",
+        "/api/u/season/getCurrentSeason",
+        "/api/u/season/getCurrentSeasons",
+        "/api/u/season/getAllYears",
+        "/api/u/season/getAllSeasonsByYear",
+        "/api/u/season/getUnSelectedAssessorList",
+        "/api/u/season/getUnFinishAssessList",
+        "/api/u/statistics/getUserAssessCountTop10",
+        "/api/u/test/testAutoSeasonFinish",
+        "/api/u/upload/uploadFace",
+        "/api/u/userRank/getUserRankList",
+        "/api/u/userRank/updateWeightById",
+        "/api/u/userRank/getUserRankAdjusterCountList",
+        "/api/u/userRank/updateUserRankAdjusterCount",
+        "/api/u/userSeasonComment/create",
+        "/api/u/userSeasonComment/top",
+        "/api/u/userSeasonComment/list",
+        "/api/u/userSeason/detail",
+        "/api/u/userSeason/getDetailForUserInfo",
+        "/api/u/userSeason/list",
+        "/api/u/userSeason/assessStatusDataIsExist",
+        "/api/u/userSeason/getDetailForUserScoreItem",
+        "/api/u/userSeason/getDetailForAssessScoreList",
+        "/api/u/userSeason/getDetailForAssessScoreItems",
+        "/api/u/userSeason/getLastSeasonScoreItem",
+        "/api/u/userSeason/getRanking",
+        "/api/u/userSeason/getCompanyOkrOverview",
+        "/api/u/userSeason/makeOkr",
+        "/api/u/userSeasonTip/create",
+        "/api/u/userSeasonTip/getListByTaskId",
+        "/api/u/userSeasonTip/getListByUserSeasonId",
+        "/error",
+        "/error"
+
+2018年06月04日：
+/api/u/account/search,/api/u/account/updateUserInfo,/api/u/account/getAccount,/api/u/account/getUserAuthorities,/api/u/account/updateFace,/api/u/account/searchAll,/api/u/adjuster/delete,/api/u/adjuster/create,/api/u/adjuster/list,/api/u/adjuster/importPreSeasonAdjuster,/api/u/assessTask/underway,/api/u/assessTask/underwayCount,/api/u/assessTask/finished,/api/u/assessTask/subordinateAssessTaskList,/api/u/assessTask/getDetailForUserInfo,/api/u/assessTask/getDetailForUserSeason,/api/u/assessTask/getDetailForUserScore,/api/u/assessTask/getUserAllItemScore,/api/u/assessTask/makeScore,/api/u/menuList,/api/u/login,/api/u/authenticate,/api/u/getAllUrl,/api/u/logout,/api/u/callback,/api/u/department/getDepartmentTree,/api/u/department/getDepartmentTreeForLeader,/api/email/remindUnderwayAssessTaskUser,/api/email/remindUnFinishFilledOKRUser,/api/email/feedBack,/api/init,/api/u/manual/syncUser,/api/u/manual/makeScore,/api/u/manual/syncDept,/api/u/manual/makeTask,/api/u/notice/delete,/api/u/notice/create,/api/u/notice/detail,/api/u/okr/update,/api/u/okr/delete,/api/u/okr/create,/api/u/okr/list,/api/u/scoreOption/list,/api/u/scoreOption/all,/api/u/scoreOption/update,/api/u/season/delete,/api/u/season/update,/api/u/season/create,/api/u/season/list,/api/u/season/getUnSelectedAssessorList,/api/u/season/getUnFinishAssessList,/api/u/season/detail,/api/u/season/getUnFinishFilledOkrList,/api/u/season/rePublish,/api/u/season/getCurrentSeason,/api/u/season/getCurrentSeasons,/api/u/season/getAllYears,/api/u/season/getAllSeasonsByYear,/api/u/season/publish,/api/u/statistics/getUserAssessCountTop10,/api/u/test/testAutoSeasonFinish,/api/u/upload/uploadFace,/api/u/userRank/getUserRankList,/api/u/userRank/updateWeightById,/api/u/userRank/getUserRankAdjusterCountList,/api/u/userRank/updateUserRankAdjusterCount,/api/u/userReport/verifyUserReport,/api/u/userReport/queryList,/api/u/userReport/createUserReportDetail,/api/u/userSeasonComment/create,/api/u/userSeasonComment/top,/api/u/userSeasonComment/list,/api/u/userSeason/makeOkr,/api/u/userSeason/list,/api/u/userSeason/assessStatusDataIsExist,/api/u/userSeason/getDetailForUserScoreItem,/api/u/userSeason/getDetailForAssessScoreList,/api/u/userSeason/getDetailForAssessScoreItems,/api/u/userSeason/getLastSeasonScoreItem,/api/u/userSeason/getRanking,/api/u/userSeason/getCompanyOkrOverview,/api/u/userSeason/detail,/api/u/userSeason/getDetailForUserInfo,/api/u/userSeasonTip/create,/api/u/userSeasonTip/getListByTaskId,/api/u/userSeasonTip/getListByUserSeasonId,/error,/error,
+
+"/api/u/account/search",
+    "/api/u/account/updateUserInfo",
+    "/api/u/account/getAccount",
+    "/api/u/account/getUserAuthorities",
+    "/api/u/account/updateFace",
+    "/api/u/account/searchAll",
+    "/api/u/adjuster/delete",
+    "/api/u/adjuster/create",
+    "/api/u/adjuster/list",
+    "/api/u/adjuster/importPreSeasonAdjuster",
+    "/api/u/assessTask/underway",
+    "/api/u/assessTask/underwayCount",
+    "/api/u/assessTask/finished",
+    "/api/u/assessTask/subordinateAssessTaskList",
+    "/api/u/assessTask/getDetailForUserInfo",
+    "/api/u/assessTask/getDetailForUserSeason",
+    "/api/u/assessTask/getDetailForUserScore",
+    "/api/u/assessTask/getUserAllItemScore",
+    "/api/u/assessTask/makeScore",
+    "/api/u/menuList",
+    "/api/u/login",
+    "/api/u/authenticate",
+    "/api/u/getAllUrl",
+    "/api/u/logout",
+    "/api/u/callback",
+    "/api/u/department/getDepartmentTree",
+    "/api/u/department/getDepartmentTreeForLeader",
+    "/api/email/remindUnderwayAssessTaskUser",
+    "/api/email/remindUnFinishFilledOKRUser",
+    "/api/email/feedBack",
+    "/api/init",
+    "/api/u/manual/syncUser",
+    "/api/u/manual/makeScore",
+    "/api/u/manual/syncDept",
+    "/api/u/manual/makeTask",
+    "/api/u/notice/delete",
+    "/api/u/notice/create",
+    "/api/u/notice/detail",
+    "/api/u/okr/update",
+    "/api/u/okr/delete",
+    "/api/u/okr/create",
+    "/api/u/okr/list",
+    "/api/u/scoreOption/list",
+    "/api/u/scoreOption/all",
+    "/api/u/scoreOption/update",
+    "/api/u/season/delete",
+    "/api/u/season/update",
+    "/api/u/season/create",
+    "/api/u/season/list",
+    "/api/u/season/getUnSelectedAssessorList",
+    "/api/u/season/getUnFinishAssessList",
+    "/api/u/season/detail",
+    "/api/u/season/getUnFinishFilledOkrList",
+    "/api/u/season/rePublish",
+    "/api/u/season/getCurrentSeason",
+    "/api/u/season/getCurrentSeasons",
+    "/api/u/season/getAllYears",
+    "/api/u/season/getAllSeasonsByYear",
+    "/api/u/season/publish",
+    "/api/u/statistics/getUserAssessCountTop10",
+    "/api/u/test/testAutoSeasonFinish",
+    "/api/u/upload/uploadFace",
+    "/api/u/userRank/getUserRankList",
+    "/api/u/userRank/updateWeightById",
+    "/api/u/userRank/getUserRankAdjusterCountList",
+    "/api/u/userRank/updateUserRankAdjusterCount",
+    "/api/u/userReport/verifyUserReport",
+    "/api/u/userReport/queryList",
+    "/api/u/userReport/createUserReportDetail",
+    "/api/u/userSeasonComment/create",
+    "/api/u/userSeasonComment/top",
+    "/api/u/userSeasonComment/list",
+    "/api/u/userSeason/makeOkr",
+    "/api/u/userSeason/list",
+    "/api/u/userSeason/assessStatusDataIsExist",
+    "/api/u/userSeason/getDetailForUserScoreItem",
+    "/api/u/userSeason/getDetailForAssessScoreList",
+    "/api/u/userSeason/getDetailForAssessScoreItems",
+    "/api/u/userSeason/getLastSeasonScoreItem",
+    "/api/u/userSeason/getRanking",
+    "/api/u/userSeason/getCompanyOkrOverview",
+    "/api/u/userSeason/detail",
+    "/api/u/userSeason/getDetailForUserInfo",
+    "/api/u/userSeasonTip/create",
+    "/api/u/userSeasonTip/getListByTaskId",
+    "/api/u/userSeasonTip/getListByUserSeasonId",
+    "/error",
+    "/error"
+
+    作废URL（2018年06月05日）
+    /api/u/assessTask/getUserAllItemScore
+    /api/u/department/getDepartmentTreeForLeader
+    /api/init
+    /api/u/season/getUnSelectedAssessorList
+    /api/u/season/detail
+    /api/u/season/getCurrentSeason
+    /api/u/userRank/getUserRankAdjusterCountList
+    /api/u/userRank/updateUserRankAdjusterCount
+    /api/u/userSeason/makeOkr
+    /error
+
+    配置url（2018年06月05日）
+    /api/u/menuList,/api/u/account/updateFace,/api/u/upload/uploadFace,/api/email/feedBack,/api/u/assessTask/underwayCount,/api/u/userSeason/assessStatusDataIsExist,/api/u/userSeason/getLastSeasonScoreItem,/api/u/notice/detail,/api/u/season/getCurrentSeasons,/api/u/account/getAccount,/api/u/account/getUserAuthorities,/api/u/account/search,/api/u/userSeason/list,/api/u/userSeason/getDetailForUserInfo,/api/u/userSeason/detail,/api/u/userSeasonTip/getListByUserSeasonId,/api/u/userSeason/getDetailForUserScoreItem,/api/u/userSeason/getDetailForAssessScoreList,/api/u/userSeasonComment/list,/api/u/userSeason/getDetailForAssessScoreItems,/api/u/okr/list,/api/u/okr/create,/api/u/okr/update,/api/u/okr/delete,/api/u/adjuster/importPreSeasonAdjuster,/api/u/adjuster/list,/api/u/adjuster/delete,/api/u/adjuster/create,/api/u/userReport/createUserReportDetail,/api/u/assessTask/underway,/api/u/assessTask/finished,/api/u/assessTask/getDetailForUserInfo,/api/u/assessTask/getDetailForUserSeason,/api/u/assessTask/getDetailForUserScore,/api/u/assessTask/makeScore,/api/u/userSeasonTip/getListByTaskId,/api/u/userSeasonComment/top,/api/u/userSeasonComment/create,/api/u/season/getAllYears,/api/u/season/getAllSeasonsByYear,/api/u/scoreOption/all,/api/u/userSeason/getRanking,/api/u/department/getDepartmentTree,/api/u/userSeason/getCompanyOkrOverview,/api/u/assessTask/subordinateAssessTaskList,/api/u/notice/create,/api/u/notice/delete,/api/u/season/list,/api/u/season/create,/api/u/season/update,/api/u/season/publish,/api/u/season/rePublish,/api/u/season/delete,/api/u/season/getUnFinishFilledOkrList,/api/u/season/getUnFinishAssessList,/api/email/remindUnderwayAssessTaskUser,/api/email/remindUnFinishFilledOKRUser,/api/u/scoreOption/list,/api/u/scoreOption/update,/api/u/account/searchAll,/api/u/account/updateUserInfo,/api/u/userRank/getUserRankList,/api/u/userRank/updateWeightById,/api/u/userReport/queryList,/api/u/userReport/verifyUserReport,/api/u/userSeasonTip/create,/api/u/login,/api/u/authenticate,/api/u/getAllUrl,/api/u/logout,/api/u/callback,/api/u/manual/syncUser,/api/u/manual/makeScore,/api/u/manual/syncDept,/api/u/manual/makeTask,/api/u/statistics/getUserAssessCountTop10
+
+
+        /api/u/menuList
+        /api/u/account/updateFace
+        /api/u/upload/uploadFace
+        /api/email/feedBack
+        /api/u/assessTask/underwayCount
+        /api/u/userSeason/assessStatusDataIsExist
+        /api/u/userSeason/getLastSeasonScoreItem
+        /api/u/notice/detail
+        /api/u/season/getCurrentSeasons
+        /api/u/account/getAccount
+        /api/u/account/getUserAuthorities
+        /api/u/account/search
+        /api/u/userSeason/list
+        /api/u/userSeason/getDetailForUserInfo
+        /api/u/userSeason/detail
+        /api/u/userSeasonTip/getListByUserSeasonId
+        /api/u/userSeason/getDetailForUserScoreItem
+        /api/u/userSeason/getDetailForAssessScoreList
+        /api/u/userSeasonComment/list
+        /api/u/userSeason/getDetailForAssessScoreItems
+        /api/u/okr/list
+        /api/u/okr/create
+        /api/u/okr/update
+        /api/u/okr/delete
+        /api/u/adjuster/importPreSeasonAdjuster
+        /api/u/adjuster/list
+        /api/u/adjuster/delete
+        /api/u/adjuster/create
+        /api/u/userReport/createUserReportDetail
+        /api/u/assessTask/underway
+        /api/u/assessTask/finished
+        /api/u/assessTask/getDetailForUserInfo
+        /api/u/assessTask/getDetailForUserSeason
+        /api/u/assessTask/getDetailForUserScore
+        /api/u/assessTask/makeScore
+        /api/u/userSeasonTip/getListByTaskId
+        /api/u/userSeasonComment/top
+        /api/u/userSeasonComment/create
+        /api/u/season/getAllYears
+        /api/u/season/getAllSeasonsByYear
+        /api/u/scoreOption/all
+        /api/u/userSeason/getRanking
+        /api/u/department/getDepartmentTree
+        /api/u/userSeason/getCompanyOkrOverview
+        /api/u/assessTask/subordinateAssessTaskList
+        /api/u/notice/create
+        /api/u/notice/delete
+        /api/u/season/list
+        /api/u/season/create
+        /api/u/season/update
+        /api/u/season/publish
+        /api/u/season/rePublish
+        /api/u/season/delete
+        /api/u/season/getUnFinishFilledOkrList
+        /api/u/season/getUnFinishAssessList
+        /api/email/remindUnderwayAssessTaskUser
+        /api/email/remindUnFinishFilledOKRUser
+        /api/u/scoreOption/list
+        /api/u/scoreOption/update
+        /api/u/account/searchAll
+        /api/u/account/updateUserInfo
+        /api/u/userRank/getUserRankList
+        /api/u/userRank/updateWeightById
+        /api/u/userReport/queryList
+        /api/u/userReport/verifyUserReport
+        /api/u/userSeasonTip/create
+        /api/u/login
+        /api/u/authenticate
+        /api/u/getAllUrl
+        /api/u/logout
+        /api/u/callback
+        /api/u/manual/syncUser
+        /api/u/manual/makeScore
+        /api/u/manual/syncDept
+        /api/u/manual/makeTask
+        /api/u/statistics/getUserAssessCountTop10
+
+    模块权限配置
+
+    登录：
+    /api/u/menuList
+    /api/u/account/updateFace
+    /api/u/upload/uploadFace
+    /api/email/feedBack
+
+
+    菜单权限URL
+    首页： portal_home
+    /api/u/assessTask/underwayCount
+    /api/u/userSeason/assessStatusDataIsExist
+    /api/u/userSeason/getLastSeasonScoreItem
+    /api/u/notice/detail
+    /api/u/season/getCurrentSeasons
+    /api/u/account/getAccount
+    /api/u/account/getUserAuthorities
+
+    我的考核: portal_user_season
+    /api/u/account/getAccount
+    /api/u/account/getUserAuthorities
+    /api/u/account/search
+    /api/u/userSeason/list
+    /api/u/userSeason/getDetailForUserInfo
+    /api/u/userSeason/detail
+    /api/u/userSeasonTip/getListByUserSeasonId
+    /api/u/userSeason/getDetailForUserScoreItem
+    /api/u/userSeason/getDetailForAssessScoreList
+    /api/u/userSeasonComment/list
+    /api/u/userSeason/getDetailForAssessScoreItems
+    /api/u/userSeason/assessStatusDataIsExist
+    /api/u/okr/list
+    /api/u/okr/create
+    /api/u/okr/update
+    /api/u/okr/delete
+    /api/u/adjuster/importPreSeasonAdjuster
+    /api/u/adjuster/list
+    /api/u/adjuster/delete
+    /api/u/adjuster/create
+    /api/u/userReport/createUserReportDetail
+    /api/u/assessTask/underwayCount
+
+
+    待评任务: portal_assessment_list
+    /api/u/assessTask/underway
+    /api/u/assessTask/finished
+    /api/u/assessTask/getDetailForUserInfo
+    /api/u/assessTask/getDetailForUserSeason
+    /api/u/assessTask/getDetailForUserScore
+    /api/u/assessTask/makeScore
+    /api/u/okr/list
+    /api/u/account/getUserAuthorities
+    /api/u/userSeasonComment/top
+    /api/u/userSeasonComment/list
+    /api/u/userSeasonComment/create
+    /api/u/userSeasonTip/getListByTaskId
+    /api/u/userSeasonTip/create
+
+    绩效排行: portal_ranking
+    /api/u/season/getAllYears
+    /api/u/season/getAllSeasonsByYear
+    /api/u/userSeasonTip/getListByUserSeasonId
+    /api/u/scoreOption/all
+    /api/u/userSeason/getRanking
+    /api/u/userSeason/getDetailForUserInfo
+    /api/u/userSeason/detail
+    /api/u/userSeason/getDetailForAssessScoreList
+    /api/u/userSeasonComment/list
+    /api/u/userSeason/getDetailForAssessScoreItems
+    /api/u/userSeason/getDetailForUserScoreItem
+    /api/u/okr/list
+
+
+
+
+
+
+    公司okr预览: portal_company_overview
+    /api/u/season/getAllYears
+    /api/u/season/getAllSeasonsByYear
+    /api/u/department/getDepartmentTree
+    /api/u/userSeason/getCompanyOkrOverview
+    /api/u/userSeason/getDetailForUserInfo
+    /api/u/userSeason/detail
+    /api/u/userSeason/getDetailForAssessScoreList
+    /api/u/userSeason/getDetailForUserScoreItem
+    /api/u/userSeasonComment/list
+    /api/u/userSeasonTip/getListByUserSeasonId
+    /api/u/okr/list
+
+
+
+    下属评分任务概览: portal_branch_overview
+    /api/u/season/getAllYears
+    /api/u/season/getAllSeasonsByYear
+    /api/u/scoreOption/all
+    /api/u/assessTask/subordinateAssessTaskList
+    /api/u/department/getDepartmentTree
+    /api/u/userSeason/getCompanyOkrOverview
+    /api/u/userSeason/getDetailForUserInfo
+    /api/u/userSeason/detail
+    /api/u/userSeason/getDetailForUserScoreItem
+    /api/u/userSeason/getDetailForAssessScoreList
+    /api/u/userSeasonComment/list
+    /api/u/userSeasonTip/getListByUserSeasonId
+    /api/u/okr/list
+
+
+    系统管理: portal_manage
+
+
+
+    系统管理-公告管理: portal_notice
+    /api/u/notice/detail
+    /api/u/notice/create
+    /api/u/notice/delete
+
+    系统管理-考核管理: portal_season
+    /api/u/season/list
+    /api/u/season/create
+    /api/u/season/update
+    /api/u/season/publish
+    /api/u/season/rePublish
+    /api/u/season/delete
+    /api/u/season/getUnFinishFilledOkrList
+    /api/u/season/getUnFinishAssessList
+    /api/email/remindUnderwayAssessTaskUser
+    /api/email/remindUnFinishFilledOKRUser
+
+
+
+    系统管理-评分配置: portal_score_option
+    /api/u/scoreOption/list
+    /api/u/scoreOption/update
+
+
+    系统管理-用户管理: portal_user_manage
+    /api/u/account/searchAll
+    /api/u/account/updateUserInfo
+
+
+    系统管理-权重配置: portal_score_weight_option
+    /api/u/userRank/getUserRankList
+    /api/u/userRank/updateWeightById
+
+
+    系统管理-举报管理: portal_report_manage
+    /api/u/userReport/queryList
+    /api/u/userReport/verifyUserReport
+
+
+系统管理员访问api
+1、/api/u/season 系列
+   排除：
+   /api/u/season/getCurrentSeasons
+   /api/u/season/getAllYears
+   /api/u/season/getAllSeasonsByYear
+2、/api/u/notice
+   排除:
+   /api/u/notice/detail
+3、/api/u/scoreOption
+   排除：
+   /api/u/scoreOption
+4、/api/u/account
+    排除：
+    /api/u/account/getAccount
+    /api/u/account/getUserAuthorities
+    /api/u/account/search
+    /api/u/account/updateFace
+5、/api/email/
+    排除：
+    /api/email/feedBack
+6、/api/u/userRank
+    排除：
+        /api/u/userRank/getUserRankList
+        /api/u/userRank/getUserRankAdjusterCountList
+7、   /api/u/userReport/
+      排除：
+      /u/userReport/createUserReportDetail
+
+下属评分任务api
+/api/u/assessTask/subordinateAssessTaskList
+
+
+
+#菜单权限配置
+    portal_home,portal_user_season,portal_assessment_list,portal_ranking,portal_company_overview,portal_branch_overview,portal_manage,portal_notice,portal_season,portal_score_option,portal_user_manage,portal_score_weight_option,portal_report_manage
+
+    portal_home
+    portal_user_season
+    portal_assessment_list
+    portal_ranking
+    portal_company_overview
+    portal_branch_overview
+    portal_manage
+    portal_notice
+    portal_season
+    portal_score_option
+    portal_user_manage
+    portal_score_weight_option
+    portal_report_manage
+
+#操作权限
+oper_can_see_season_detail_rank_and_score,oper_can_see_user_season_detail_for_user_score_item,oper_can_see_user_detail_for_assess_score_list,oper_can_see_ranking_list
+
+     操作权限是否可以查看季度考核排名
+    oper_can_see_season_detail_rank_and_score
+      操作权限是否可以获取季度评分
+    oper_can_see_user_season_detail_for_user_score_item
+      操作权限是否可以查看评价列表用户信息
+    oper_can_see_user_detail_for_assess_score_list
+     操作权限是否可以获取季度排行榜
+    oper_can_see_ranking_list
+
+#角色
+
+  系统管理员
+  部门负责人
+  普通用户
+
+
+#领导权限用户
+    段威	    集团事务中心/集团总裁办公室
+    奚原	    集团事务中心/集团总裁办公室
+
+    陈巧锋	广告业务中心/商务部/大中华商务部
+    李健欣	广告业务中心/广告运营部
+    宋秀银	广告业务中心/网盟流量部
+    王家联	集团事务中心/集团总裁办公室
+    吴峰	    工程中心
+
+    方子恺	集团事务中心/集团总裁办公室
+    鞠芳	    程序化业务中心/3S系统业务部
+    宋笑飞	集团事务中心/集团财务部
+    梁小玲	程序化业务中心/商务&商务运营部
+
+    黄梦溪	工程中心/运维部
+
+    梁云鹏	工程中心/前端业务部
+    陈奇	    工程中心/M系统平台技术部
+
+    王春雨	程序化业务中心/M系统业务部
+    刘腾飞	工程中心/基础业务平台技术部/CRM平台组
+    蔡汉示	广告业务中心/投放部/媒体投放三组
+    程筱净	集团事务中心/集团市场公关部/品牌公关部
+    潘文洁	集团事务中心/集团市场公关部/设计部
+    黎田辉	集团事务中心/集团人力资源部
+    白雪松	工程中心/项目管控部
+    朱亚东	AI中心
+    蔡超	    工程中心/首席架构师&技术委员会
+    魏爱鑫	工程中心/质量保障部
+
+    冯华	    程序化业务中心/程序化流量投放运营部
+    朱闻欣   	程序化业务中心/创意实验室
+    晁杨	    程序化业务中心/投放业务部
+    钟星儿	    工程中心/3S系统技术部
+    陈实	    集团事务中心/集团财务部/海外财务组
+
+#管理员权限用户
+吴峰
+刘腾飞
+王姊倩
+顾炜

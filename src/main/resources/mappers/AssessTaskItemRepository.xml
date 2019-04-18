@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobvista.okr.repository.AssessTaskItemRepository">
+    <resultMap id="BaseResultMap" type="com.mobvista.okr.domain.AssessTaskItem">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="task_id" jdbcType="BIGINT" property="taskId"/>
+        <result column="option_id" jdbcType="BIGINT" property="optionId"/>
+        <result column="score" jdbcType="DECIMAL" property="score"/>
+        <result column="created_date" jdbcType="TIMESTAMP" property="createdDate"/>
+        <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, task_id, option_id, score, created_date, last_modified_date
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from assess_task_item
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="findAllByTaskId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from assess_task_item
+        where task_id = #{taskId}
+
+    </select>
+    <select id="findAllByTaskIdList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from assess_task_item
+        where task_id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from assess_task_item
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <delete id="deleteByTaskId">
+      delete from assess_task_item
+    where task_id = #{taskId}
+    </delete>
+    <insert id="insert" parameterType="com.mobvista.okr.domain.AssessTaskItem">
+    insert into assess_task_item (id, task_id, option_id, 
+      score, created_date, last_modified_date
+      )
+    values (#{id,jdbcType=BIGINT}, #{taskId,jdbcType=BIGINT}, #{optionId,jdbcType=BIGINT}, 
+      #{score,jdbcType=DECIMAL}, #{createdDate,jdbcType=TIMESTAMP}, #{lastModifiedDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.mobvista.okr.domain.AssessTaskItem">
+        insert into assess_task_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="taskId != null">
+                task_id,
+            </if>
+            <if test="optionId != null">
+                option_id,
+            </if>
+            <if test="score != null">
+                score,
+            </if>
+            <if test="createdDate != null">
+                created_date,
+            </if>
+            <if test="lastModifiedDate != null">
+                last_modified_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="taskId != null">
+                #{taskId,jdbcType=BIGINT},
+            </if>
+            <if test="optionId != null">
+                #{optionId,jdbcType=BIGINT},
+            </if>
+            <if test="score != null">
+                #{score,jdbcType=DECIMAL},
+            </if>
+            <if test="createdDate != null">
+                #{createdDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastModifiedDate != null">
+                #{lastModifiedDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <insert id="insertList">
+        insert into assess_task_item (id, task_id, option_id,
+        score, created_date, last_modified_date
+        )
+        values
+        <foreach collection="list" item="po" separator=",">
+            (#{po.id,jdbcType=BIGINT}, #{po.taskId,jdbcType=BIGINT}, #{po.optionId,jdbcType=BIGINT},
+            #{po.score,jdbcType=DECIMAL}, #{po.createdDate,jdbcType=TIMESTAMP},
+            #{po.lastModifiedDate,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mobvista.okr.domain.AssessTaskItem">
+        update assess_task_item
+        <set>
+            <if test="taskId != null">
+                task_id = #{taskId,jdbcType=BIGINT},
+            </if>
+            <if test="optionId != null">
+                option_id = #{optionId,jdbcType=BIGINT},
+            </if>
+            <if test="score != null">
+                score = #{score,jdbcType=DECIMAL},
+            </if>
+            <if test="createdDate != null">
+                created_date = #{createdDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastModifiedDate != null">
+                last_modified_date = #{lastModifiedDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.mobvista.okr.domain.AssessTaskItem">
+    update assess_task_item
+    set task_id = #{taskId,jdbcType=BIGINT},
+      option_id = #{optionId,jdbcType=BIGINT},
+      score = #{score,jdbcType=DECIMAL},
+      created_date = #{createdDate,jdbcType=TIMESTAMP},
+      last_modified_date = #{lastModifiedDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

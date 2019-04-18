@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" debug="true">
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <!--<property name="LOG_PATH" value="/tmp/okr"/>-->
+    <!--DEBUG级别日志-->
+    <appender name="FILENAME"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>okr-log.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>okr-log-%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>500MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%-5p [%d][%mdc{mdc_userId}] %C:%L - %m %n</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+    </appender>
+    <logger name="com.mobvista.okr" level="INFO"></logger>
+    <logger name="com.mobvista.okr.repository" level="DEBUG"></logger>
+
+    <logger name="com.sun" level="WARN"/>
+    <logger name="org.apache" level="WARN"/>
+    <logger name="org.apache.catalina.startup" level="DEBUG"/>
+    <!--输出hibernate参数-->
+    <logger name="org.hibernate.sql" level="TRACE"/>
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+    <logger name="org.hibernate.validator" level="WARN"/>
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.hibernate.ejb.HibernatePersistence" level="OFF"/>
+    <logger name="org.springframework.web" level="WARN"/>
+    <logger name="org.springframework.security" level="WARN"/>
+    <logger name="org.springframework.cache" level="WARN"/>
+    <logger name="sun.rmi" level="WARN"/>
+    <logger name="sun.rmi.transport" level="WARN"/>
+
+    <root level="INFO">
+        <appender-ref ref="FILENAME"/>
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body style="padding: 30px">
+<table>
+    <tr>
+        <td style="font-weight: bold">
+            被举报人:
+        </td>
+        <td>
+            <p style="font-style: italic; font-weight: bold;color:blue" th:text="|  ${vm.assessTaskUserName}|"></p>
+        </td>
+
+    </tr>
+    <tr>
+        <td style="font-weight: bold">
+            举报原因:
+        </td>
+        <td>
+            <p style="font-style: italic; font-weight: bold;color:blue"
+               th:text="| ${vm.reportContent==null || vm.reportContent==''?'考评评分不合理':vm.reportContent}|"></p>
+        </td>
+
+    </tr>
+    <tr>
+        <td>
+            举报人:
+        </td>
+        <td>
+            <p style="font-style: italic; font-weight: bold;color:blue" th:text="|  ${vm.reportUserName}|"></p>
+        </td>
+    </tr>
+
+</table>
+<p style="margin: 60px; text-align: center; font-size: .8rem">
+    <a style="padding: 5px 10px; border: #666666 1px solid"
+       th:href="@{|http://okr.mobvista.com/#/manage/report_manage|}">立即处理</a>
+</p>
+<p style="text-align: right; font-size: .8rem; font-style: italic; color: #6e6e6e">
+    <span>Mobvista OKR System</span>
+</p>
+</body>
+
+</html>

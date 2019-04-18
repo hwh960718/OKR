@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobvista.okr.repository.ScoreUserRepository">
+    <resultMap id="BaseResultMap" type="com.mobvista.okr.domain.ScoreUser">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="valid_score_total" jdbcType="BIGINT" property="validScoreTotal"/>
+        <result column="grant_score_total" jdbcType="BIGINT" property="grantScoreTotal"/>
+        <result column="abatement_score_total" jdbcType="BIGINT" property="abatementScoreTotal"/>
+        <result column="locked_score_total" jdbcType="BIGINT" property="lockedScoreTotal"/>
+        <result column="penalty_score_total" jdbcType="BIGINT" property="penaltyScoreTotal"/>
+        <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate"/>
+    </resultMap>
+
+
+    <resultMap id="scoreUserDTOMap" type="com.mobvista.okr.dto.score.ScoreUserDTO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="real_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="departmentName" jdbcType="VARCHAR" property="departmentName"/>
+        <result column="valid_score_total" jdbcType="BIGINT" property="validScoreTotal"/>
+        <result column="grant_score_total" jdbcType="BIGINT" property="grantScoreTotal"/>
+        <result column="abatement_score_total" jdbcType="BIGINT" property="abatementScoreTotal"/>
+        <result column="locked_score_total" jdbcType="BIGINT" property="lockedScoreTotal"/>
+        <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, valid_score_total, grant_score_total, abatement_score_total,penalty_score_total,locked_score_total, modify_date
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from score_user
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="countPageByNameLike" resultType="java.lang.Long">
+        select count(1) from score_user s
+        inner join user_profile u on u.id = s.id
+        <where>
+            <if test="name != null and name !='' ">
+                u.real_name like CONCAT('%',#{name},'%')
+            </if>
+            <if test="departIdList !=null ">
+                and u.department_id in
+                <foreach collection="departIdList" item="departId" open="(" separator="," close=")">
+                    #{departId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <select id="queryPageByNameLike" resultMap="scoreUserDTOMap">
+        select s.id, s.valid_score_total, s.grant_score_total, s.abatement_score_total,u.real_name,d.name departmentName
+        from score_user s
+        inner join user_profile u on u.id = s.id
+        INNER JOIN department d on u.department_id = d.id
+        <where>
+            <if test="name != null and name !='' ">
+                u.real_name like CONCAT('%',#{name},'%')
+            </if>
+            <if test="departIdList !=null ">
+                and u.department_id in
+                <foreach collection="departIdList" item="departId" open="(" separator="," close=")">
+                    #{departId}
+                </foreach>
+            </if>
+        </where>
+        order by s.valid_score_total desc
+        limit #{start},#{size}
+    </select>
+    <select id="getAllUserId" resultType="java.lang.Long">
+        select id from score_user
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from score_user
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.mobvista.okr.domain.ScoreUser">
+    insert into score_user (id, valid_score_total, grant_score_total, 
+      abatement_score_total,locked_score_total, modify_date)
+    values (#{id,jdbcType=BIGINT}, #{validScoreTotal,jdbcType=BIGINT}, #{grantScoreTotal,jdbcType=BIGINT}, 
+      #{abatementScoreTotal,jdbcType=BIGINT},#{lockedScoreTotal,jdbcType=BIGINT}, #{modifyDate,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="com.mobvista.okr.domain.ScoreUser">
+        insert into score_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="validScoreTotal != null">
+                valid_score_total,
+            </if>
+            <if test="grantScoreTotal != null">
+                grant_score_total,
+            </if>
+            <if test="abatementScoreTotal != null">
+                abatement_score_total,
+            </if>
+            <if test="modifyDate != null">
+                modify_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="validScoreTotal != null">
+                #{validScoreTotal,jdbcType=BIGINT},
+            </if>
+            <if test="grantScoreTotal != null">
+                #{grantScoreTotal,jdbcType=BIGINT},
+            </if>
+            <if test="abatementScoreTotal != null">
+                #{abatementScoreTotal,jdbcType=BIGINT},
+            </if>
+            <if test="modifyDate != null">
+                #{modifyDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <insert id="insertList">
+        insert into score_user (id, valid_score_total, grant_score_total,
+        abatement_score_total,locked_score_total,penalty_score_total, modify_date)
+        values
+        <foreach collection="list" item="po" separator=",">
+            (#{po.id,jdbcType=BIGINT}, #{po.validScoreTotal,jdbcType=BIGINT}, #{po.grantScoreTotal,jdbcType=BIGINT},
+            #{po.abatementScoreTotal,jdbcType=BIGINT},#{lockedScoreTotal,jdbcType=BIGINT},
+            #{po.modifyDate,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mobvista.okr.domain.ScoreUser">
+        update score_user
+        <set>
+            <if test="validScoreTotal != null">
+                valid_score_total = #{validScoreTotal,jdbcType=BIGINT},
+            </if>
+            <if test="grantScoreTotal != null">
+                grant_score_total = #{grantScoreTotal,jdbcType=BIGINT},
+            </if>
+            <if test="abatementScoreTotal != null">
+                abatement_score_total = #{abatementScoreTotal,jdbcType=BIGINT},
+            </if>
+            <if test="modifyDate != null">
+                locked_score_total = #{lockedScoreTotal,jdbcType=BIGINT},
+            </if>
+            modify_date = now()
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.mobvista.okr.domain.ScoreUser">
+    update score_user
+    set valid_score_total = #{validScoreTotal,jdbcType=BIGINT},
+      grant_score_total = #{grantScoreTotal,jdbcType=BIGINT},
+      abatement_score_total = #{abatementScoreTotal,jdbcType=BIGINT},
+      modify_date = now()
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <update id="updateUserScoreList">
+        update score_user
+        <set>
+            valid_score_total=
+            <foreach collection="list" item="item" index="index"
+                     separator=" " open="( case id" close="end )">
+                when #{item.id} then valid_score_total + #{item.validScoreTotal}
+            </foreach>,
+            grant_score_total=
+            <foreach collection="list" item="item" index="index"
+                     separator=" " open="( case id" close="end )">
+                when #{item.id} then grant_score_total + #{item.grantScoreTotal}
+            </foreach>,
+            abatement_score_total=
+            <foreach collection="list" item="item" index="index"
+                     separator=" " open="( case id" close="end )">
+                when #{item.id} then abatement_score_total+ #{item.abatementScoreTotal}
+            </foreach>,
+            penalty_score_total=
+            <foreach collection="list" item="item" index="index"
+                     separator=" " open="( case id" close="end )">
+                when #{item.id} then penalty_score_total + #{item.penaltyScoreTotal}
+            </foreach>,
+            modify_date=now()
+        </set>
+        where id in
+        <foreach collection="list" index="index" item="item"
+                 separator="," open="(" close=")">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+    <update id="updateUserValidScore2AbatementScore">
+        update score_user
+        set valid_score_total = valid_score_total - #{score},
+        abatement_score_total = abatement_score_total + #{score}
+        where id = #{userId} and valid_score_total -locked_score_total - #{score}>=0
+    </update>
+    <update id="updateUserValidAbatementUnLockScoreList">
+        update score_user
+        set valid_score_total =
+        <foreach collection="list" item="item" index="index"
+                 separator=" " open="( case id" close="end )">
+            when #{item.id} then valid_score_total - #{item.validScoreTotal}
+        </foreach>,
+        abatement_score_total =
+        <foreach collection="list" item="item" index="index"
+                 separator=" " open="( case id" close="end )">
+            when #{item.id} then abatement_score_total + #{item.validScoreTotal}
+        </foreach>,
+        locked_score_total =
+        <foreach collection="list" item="item" index="index"
+                 separator=" " open="( case id" close="end )">
+            when #{item.id} then locked_score_total - #{item.lockedScoreTotal}
+        </foreach>,
+        modify_date=now()
+        where id in
+        <foreach collection="list" index="index" item="item"
+                 separator="," open="(" close=")">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+        and
+        <foreach collection="list" item="item" index="index"
+                 separator=" " open="( case id" close="end )">
+            when #{item.id} then valid_score_total -locked_score_total + #{item.lockedScoreTotal} -
+            #{item.validScoreTotal}>=0
+        </foreach>
+
+    </update>
+    <update id="updateUserLockScoreList">
+        update score_user
+        set locked_score_total =
+        <foreach collection="list" item="item" index="index"
+                 separator=" " open="( case id" close="end )">
+            when #{item.id} then locked_score_total + #{item.lockedScoreTotal}
+        </foreach>
+        where id in
+        <foreach collection="list" index="index" item="item"
+                 separator="," open="(" close=")">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+        and
+        <foreach collection="list" item="item" index="index"
+                 separator=" " open="( case id" close="end )">
+            when #{item.id} then valid_score_total -locked_score_total - #{item.lockedScoreTotal}>=0
+        </foreach>
+
+    </update>
+</mapper>

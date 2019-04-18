@@ -1,0 +1,79 @@
+spring:
+  profiles:
+    active: prod
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    pool:
+      max-active: 100
+      max-idle: 20
+      min-idle: 10
+      max-wait: -1
+    timeout: 2000
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/okr?useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+
+  token:
+    secret: 48b0d7b6fa5e9b814f3000f9163b4cb6249e7043
+    token-validity-in-seconds: 7200
+    token-validity-in-seconds-for-remember-me: 2592000
+  thymeleaf:
+    mode: XHTML
+    prefix: classpath:/mails/
+  http:
+    multipart:
+      max-file-size: 50mb
+      max-request-size: 50mb
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+  messages:
+    basename: i18n/messages
+server:
+  port: 8888
+
+#mybatis
+mybatis:
+  mapper-locations: classpath*:mappers/*.xml
+  type-aliases-package: com.mobvista.okr.domain
+
+# 账号中心
+acs:
+  accountDomain: https://accounts.mobvista.com
+  clientId: 1009
+  clientSecret: 0f8f6990dfbcc1c47d87e399ee086479
+
+# restTemplate 配置
+rest:
+  readTimeout: 5000
+  connectTimeout: 15000
+
+# qiniu 配置
+qiniu:
+  bucket: mbokr
+  host: p2p6i6tk0.bkt.clouddn.com
+  ak: LrHnIm0v1SUQ_n6VtQbDLOnC4Bg8bXk86Af9A18b
+  sk: FNuk3DUAcYz3CpPAZ_hcKYnO54HaBrDqlrLYvY3L
+
+#邮箱配置
+mail:
+  host: email-smtp.us-east-1.amazonaws.com
+  sender: okr-support@mobvista.com
+  senderName: OKR
+  userName: AKIAJTMG4ABDYRFLW6XA
+  password: AqaqDrqJ0vZKbKcRgP7rJRwQyJE5Y38+9kyR5XYHGZNX
+  port: 25
+  receiveMailAddress: okr@mobvista.com
+  tempFilePath: /tmp/
+  test: false
+  emailEnable: true
+
+application:
+  initSecret: okrOKR2018
+  name: okr-service
+  host: http://okr.mobvista.com
+  cookieDomain: okr.mobvista.com
+  checkOrderPassword: false

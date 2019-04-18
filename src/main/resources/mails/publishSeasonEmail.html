@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:text="${seasonTitle}">JHipster</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    </head>
+    <body style="padding: 30px">
+    <p style="font-style: italic; font-weight: bold" th:text="|Dear ${user.realName}:|">
+            Dear Jhipster:
+        </p>
+        <p style="margin-top: 40px; text-indent: 2rem; font-size: 1rem;">
+            【${seasonTitle}】的考核任务已发布，请尽快登陆OKR系统，点击我的考核，填写您的OKR目标!
+        </p>
+        <p style="margin: 60px; text-align: center; font-size: .8rem">
+          <a style="padding: 5px 10px; border: #666666 1px solid" th:href="@{|${baseUrl}/#/user_season/index|}">立即填写OKR目标</a>
+        </p>
+        <p style="text-align: right; font-size: .8rem; font-style: italic; color: #6e6e6e">
+            <span>Mobvista OKR System</span>
+        </p>
+    </body>
+</html>

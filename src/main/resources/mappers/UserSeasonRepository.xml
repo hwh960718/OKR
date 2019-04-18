@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobvista.okr.repository.UserSeasonRepository">
+    <resultMap id="BaseResultMap" type="com.mobvista.okr.domain.UserSeason">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="season_id" jdbcType="BIGINT" property="seasonId"/>
+        <result column="assess_status" jdbcType="VARCHAR" property="assessStatus"/>
+        <result column="assess_result" jdbcType="TINYINT" property="assessResult"/>
+        <result column="created_date" jdbcType="TIMESTAMP" property="createdDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, user_id, season_id, assess_status, assess_result, created_date
+  </sql>
+    <sql id="Base_Column_List_AS_U">
+    u.id, u.user_id, u.season_id, u.assess_status, u.assess_result, u.created_date
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_season
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="findOneBySeasonIdAndUserId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_season
+        where user_id = #{userId}
+        and season_id = #{seasonId}
+    </select>
+    <select id="findAllBySeasonId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_season
+        where season_id = #{seasonId}
+    </select>
+    <select id="getUserSeasonRank" resultType="java.lang.Integer">
+        SELECT count(1) FROM user_season us INNER JOIN user_season_item usi ON us.id=usi.user_season_id and usi.option_id =0
+        WHERE usi.score >=#{score} AND season_id=#{seasonId}
+    </select>
+    <select id="queryByUserIdAndStatus" resultType="com.mobvista.okr.dto.UserSeasonDTO">
+        SELECT
+        us.id AS id,
+        s.id AS seasonId,
+        s.title AS seasonTitle,
+        s.start_time AS startTime,
+        s.end_time AS endTime,
+        s.first_stage_start_time AS firstStageStartTime,
+        s.first_stage_end_time AS firstStageEndTime,
+        s.second_stage_start_time AS secondStageStartTime,
+        s.second_stage_end_time AS secondStageEndTime,
+        us.user_id AS userId,
+        us.assess_status AS assessStatus,
+        usi.score,
+        usi.ranking,
+        a.num as isAssessFinished
+        FROM
+        user_season us
+        INNER JOIN season s ON us.season_id = s.id
+        LEFT JOIN user_season_item usi ON usi.user_season_id = us.id AND usi.option_id = 0
+        LEFT JOIN
+        (
+        select count(1) num ,adjuster_id from adjuster where adjuster_id = #{userId}
+        ) a on a.adjuster_id = us.user_id
+        WHERE
+        us.user_id = #{userId}
+        <if test="assessStatus!=null">
+            AND us.assess_status = #{assessStatus}
+        </if>
+        ORDER BY s.created_date desc
+        limit #{start},#{size}
+    </select>
+    <select id="countByUserIdAndStatus" resultType="java.lang.Long">
+        SELECT count(1) FROM
+        user_season us
+        INNER JOIN season s ON us.season_id = s.id
+        LEFT JOIN user_season_item usi ON usi.user_season_id = us.id
+        AND usi.option_id = 0
+        WHERE
+        us.user_id = #{userId}
+        <if test="assessStatus!=null">
+            AND us.assess_status = #{assessStatus}
+        </if>
+        ORDER BY s.created_date desc
+    </select>
+    <select id="countAssessStatusData" resultType="java.lang.Long">
+        SELECT count(id) FROM user_season WHERE user_id=#{userId}
+        <if test="assessStatus!=null">
+            AND assess_status = #{assessStatus}
+        </if>
+        LIMIT 0,1
+    </select>
+    <select id="getUnFinishFilledOkrList" resultType="com.mobvista.okr.dto.UserInfoDTO">
+        SELECT
+            u.id AS id,
+            u.real_name AS realName,
+            u.email AS email,
+            u.status
+        FROM
+            user_season us
+            LEFT JOIN okr_content oc ON oc.user_season_id = us.id
+            LEFT JOIN user_profile u ON u.id = us.user_id
+        WHERE
+            us.season_id = #{seasonId}
+            AND oc.id IS NULL
+    </select>
+    <select id="queryRankingList" resultType="com.mobvista.okr.dto.RankingDTO">
+        SELECT
+        us.id AS id,
+        u.real_name AS realName,
+        u.profile_photo AS profilePhoto,
+        u.department_id AS departmentId,
+        u.rank AS rank,
+        us.season_id AS seasonId,
+        us.user_id AS userId,
+        usi.score AS score,
+        usi.ranking AS ranking,
+        d.NAME AS departmentName
+        FROM
+        user_season us
+        LEFT JOIN user_season_item usi ON us.id = usi.user_season_id
+        LEFT JOIN user_profile u ON us.user_id = u.id
+        LEFT JOIN department d ON d.id = u.department_id
+        WHERE
+        usi.score != 0
+        AND us.season_id = #{seasonId}
+        <if test="assessResult !=null and assessResult!=0">
+            AND us.assess_result = #{assessResult}
+        </if>
+        AND usi.option_id = #{scoreOptionId}
+        ORDER BY usi.score DESC
+        LIMIT #{start},#{size}
+    </select>
+    <select id="countRankingList" resultType="java.lang.Long">
+        SELECT count(1) FROM
+        user_season us
+        LEFT JOIN user_season_item usi ON us.id = usi.user_season_id
+        LEFT JOIN user_profile u ON us.user_id = u.id
+        LEFT JOIN department d ON d.id = u.department_id
+        WHERE
+        usi.score != 0
+        AND us.season_id = #{seasonId}
+        <if test="assessResult !=null and assessResult!=0">
+            AND us.assess_result = #{assessResult}
+        </if>
+        AND usi.option_id = #{scoreOptionId}
+        ORDER BY usi.score DESC
+    </select>
+    <select id="queryCompanyOkrOverview" resultType="com.mobvista.okr.dto.RankingDTO">
+        SELECT
+        us.id AS id,
+        u.real_name AS realName,
+        u.profile_photo AS profilePhoto,
+        u.department_id AS departmentId,
+        u.rank AS rank,
+        us.id AS userSeasonId,
+        us.user_id AS userId,
+        usi.score AS score,
+        usi.ranking AS ranking
+        FROM
+        user_season us
+        LEFT JOIN user_season_item usi ON us.id = usi.user_season_id
+        LEFT JOIN user_profile u ON us.user_id = u.id
+        WHERE
+        usi.option_id = 0
+        AND u.STATUS != 4
+        AND us.season_id = #{seasonId}
+        AND u.department_id IN
+        <foreach collection="depIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        ORDER BY ISNULL(usi.ranking),usi.ranking,us.id
+        LIMIT #{start},#{size}
+    </select>
+    <select id="countCompanyOkrOverview" resultType="java.lang.Long">
+        SELECT count(1) FROM
+        user_season us
+        LEFT JOIN user_season_item usi ON us.id = usi.user_season_id
+        LEFT JOIN user_profile u ON us.user_id = u.id
+        WHERE
+        usi.option_id = 0
+        AND u.STATUS != 4
+        AND us.season_id = #{seasonId}
+        AND u.department_id IN
+        <foreach collection="depIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        ORDER BY ISNULL(usi.ranking),usi.ranking,us.id
+    </select>
+    <select id="queryUnFinishFilledOkrList" resultType="com.mobvista.okr.dto.UserInfoLiteDTO">
+        SELECT
+            u.id AS id,
+            u.real_name AS realName,
+            u.profile_photo AS profilePhoto,
+            u.email AS email,
+            u.job_name AS jobName,
+            u.department_id AS departmentId,
+            u.rank AS rank,
+            d.NAME AS departmentName
+        FROM
+            user_season us
+            LEFT JOIN okr_content oc ON oc.user_season_id = us.id
+            LEFT JOIN user_profile u ON u.id = us.user_id and u.status !=4
+            INNER JOIN department d ON u.department_id = d.id
+        WHERE
+            us.season_id = #{seasonId}
+            AND oc.id IS NULL
+        LIMIT #{start},#{size}
+    </select>
+    <select id="countUnFinishFilledOkrList" resultType="java.lang.Long">
+         SELECT count(1) FROM
+            user_season us
+            LEFT JOIN okr_content oc ON oc.user_season_id = us.id
+            LEFT JOIN user_profile u ON u.id = us.user_id and u.status !=4
+            INNER JOIN department d ON u.department_id = d.id
+        WHERE
+            us.season_id = #{seasonId}
+            AND oc.id IS NULL
+    </select>
+    <select id="queryUnSelectedAssessorList" resultType="com.mobvista.okr.dto.UserInfoLiteDTO">
+        SELECT
+            u.id AS id,
+            u.real_name AS realName,
+            u.profile_photo AS profilePhoto,
+            u.email AS email,
+            u.job_name AS jobName,
+            u.department_id AS departmentId,
+            u.rank AS rank,
+            d.NAME AS departmentName
+        FROM
+            user_season us
+            LEFT JOIN user_profile u ON us.user_id = u.id
+            INNER JOIN department d ON u.department_id = d.id
+        WHERE
+            us.season_id = #{seasonId}
+            AND us.is_selected_assessor = FALSE
+        LIMIT #{start},#{size}
+    </select>
+    <select id="countUnSelectedAssessorList" resultType="java.lang.Long">
+      SELECT count(1) FROM
+        user_season us
+        LEFT JOIN user_profile u ON us.user_id = u.id
+        INNER JOIN department d ON u.department_id = d.id
+    WHERE
+        us.season_id = #{seasonId}
+        AND us.is_selected_assessor = FALSE
+    </select>
+    <select id="queryUnFinishAssessList" resultType="com.mobvista.okr.dto.UserInfoLiteDTO">
+        SELECT
+        u.id AS id,
+        u.real_name AS realName,
+        u.profile_photo AS profilePhoto,
+        u.email AS email,
+        u.job_name AS jobName,
+        u.department_id AS departmentId,
+        u.rank AS rank,
+        d.NAME AS departmentName
+        FROM
+        ( SELECT DISTINCT ast.assessor_id FROM assess_task ast
+        INNER JOIN user_season us on us.id = ast.user_season_id
+        WHERE us.season_id = #{seasonId} AND ast.`status` in
+        <foreach collection="statusList" item="status" open="(" separator="," close=")">
+            #{status}
+        </foreach>
+        ) AS atk
+        LEFT JOIN user_profile u ON atk.assessor_id = u.id and u.status !=4
+        INNER JOIN department d ON u.department_id = d.id
+        LIMIT #{start},#{size}
+    </select>
+    <select id="countUnFinishAssessList" resultType="java.lang.Long">
+        SELECT count(1) FROM
+        ( SELECT DISTINCT ast.assessor_id FROM assess_task ast
+        INNER JOIN user_season us on us.id = ast.user_season_id
+        WHERE us.season_id = #{seasonId} AND ast.`status` in
+        <foreach collection="statusList" item="status" open="(" separator="," close=")">
+            #{status}
+        </foreach>
+        ) AS atk
+        LEFT JOIN user_profile u ON atk.assessor_id = u.id and u.status !=4
+        INNER JOIN department d ON u.department_id = d.id
+    </select>
+    <select id="findAllByIdList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_season
+        where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+
+    </select>
+    <select id="findOneBySeasonIdAndUserIdIn" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_season
+        where season_id = #{seasonId}
+        and user_id in
+        <foreach collection="userIdList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="findAllBySeasonIdExceptInvalidUser" resultType="com.mobvista.okr.domain.UserSeason">
+        select
+        <include refid="Base_Column_List_AS_U"/>
+        from user_season u
+        INNER JOIN user_profile up ON u.user_id = up.id AND up.status != 4
+        where season_id = #{seasonId}
+    </select>
+    <select id="countOKRUser" resultType="java.lang.Long">
+        select count(1) from  user_season where season_id = #{seasonId}
+    </select>
+    <select id="countAllAssess" resultType="java.lang.Long">
+        SELECT count(DISTINCT ast.assessor_id) FROM assess_task ast
+              INNER JOIN user_season us on us.id = ast.user_season_id
+              WHERE us.season_id = 4
+    </select>
+    <select id="queryViewDataByUserIdAndStatus" resultType="com.mobvista.okr.dto.UserSeasonDTO">
+        SELECT
+        us.id AS id,
+        s.id AS seasonId,
+        s.title AS seasonTitle,
+        s.start_time AS startTime,
+        s.end_time AS endTime,
+        s.first_stage_start_time AS firstStageStartTime,
+        s.first_stage_end_time AS firstStageEndTime,
+        s.second_stage_start_time AS secondStageStartTime,
+        s.second_stage_end_time AS secondStageEndTime,
+        us.user_id AS userId,
+        us.assess_status AS assessStatus,
+        usi.score,
+        usi.ranking,
+        adjustedCount.num as adjustedCount,
+        assessedTaskCount.num as assessedTaskCount,
+        assessTaskCount.num as assessTaskCount,
+        IF(oc.num>0,'true','false') as finishContent
+        FROM
+        user_season us
+        INNER JOIN season s ON us.season_id = s.id
+        LEFT JOIN user_season_item usi ON usi.user_season_id = us.id AND usi.option_id = 0
+        LEFT JOIN (
+        SELECT COUNT(1) num ,user_season_id FROM okr_content oc GROUP BY oc.user_season_id
+        ) oc on us.id = oc.user_season_id
+        LEFT JOIN
+        (
+        select COUNT(1) num ,a.user_season_id from adjuster a
+        INNER JOIN user_profile u ON a.adjuster_id = u.id AND u.`status`!=4
+        GROUP BY a.user_season_id
+        ) adjustedCount on adjustedCount.user_season_id = us.id
+        left join
+        (
+        select count(1) num,us.season_id,ast.assessor_id from assess_task ast
+        INNER JOIN user_season us on us.id = ast.user_season_id
+        where ast.score is not null
+        GROUP BY ast.assessor_id ,us.season_id
+        ) assessedTaskCount on assessedTaskCount.season_id=us.season_id and us.user_id = assessedTaskCount.assessor_id
+        left join
+        (
+        select count(1) num,us.season_id,ast.assessor_id from assess_task ast
+        INNER JOIN user_season us on us.id = ast.user_season_id
+        GROUP BY ast.assessor_id ,us.season_id
+        ) assessTaskCount on assessTaskCount.season_id=us.season_id and us.user_id = assessTaskCount.assessor_id
+        WHERE
+        us.user_id = #{userId}
+        <if test="assessStatus!=null">
+            AND us.assess_status = #{assessStatus}
+        </if>
+        ORDER BY s.created_date desc
+    </select>
+    <select id="queryUserAllSeasonRank" resultType="com.mobvista.okr.vm.XYAxisVM">
+        SELECT s.title x,IFNULL(usi.ranking,0) y FROM user_season_item usi
+        INNER JOIN user_season us ON usi.user_season_id = us.id AND usi.option_id =0
+        INNER JOIN season s ON us.season_id = s.id
+        WHERE us.user_id = #{userId}
+        GROUP BY usi.user_season_id
+        ORDER BY season_id
+    </select>
+    <select id="queryUserAllSeasonScore" resultType="com.mobvista.okr.vm.XYAxisVM">
+        SELECT s.title x,IFNULL(usi.score,0) y FROM user_season_item usi
+        INNER JOIN user_season us ON usi.user_season_id = us.id AND usi.option_id =0
+        INNER JOIN season s ON us.season_id = s.id
+        WHERE us.user_id = #{userId}
+        GROUP BY usi.user_season_id
+        ORDER BY season_id
+    </select>
+    <select id="queryLastInfoByUserId" resultMap="BaseResultMap">
+        SELECT us.* FROM user_season us
+        INNER JOIN season s ON s.id = us.season_id AND s.status = 3
+        WHERE us.user_id = #{userId}
+        ORDER BY s.second_stage_end_time LIMIT 1
+    </select>
+    <select id="queryUserRankingInfoBySeasonIdAndNum" resultType="com.mobvista.okr.dto.UserSeasonDTO">
+          SELECT
+            u.id userId,
+            u.real_name userName,
+            usi.ranking ranking,
+            usi.score
+          FROM user_season_item usi
+          INNER JOIN user_season us ON usi.user_season_id = us.id AND usi.option_id = 0
+          INNER JOIN user_profile u on us.user_id = u.id
+          WHERE us.season_id =#{seasonId} and usi.ranking is not null
+          ORDER BY usi.ranking
+          LIMIT #{size};
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user_season
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.mobvista.okr.domain.UserSeason">
+    insert into user_season (id, user_id, season_id, 
+      assess_status, assess_result, created_date
+      )
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{seasonId,jdbcType=BIGINT},
+      #{assessStatus,jdbcType=VARCHAR}, #{assessResult,jdbcType=TINYINT}, #{createdDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.mobvista.okr.domain.UserSeason" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into user_season
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="seasonId != null">
+                season_id,
+            </if>
+            <if test="assessStatus != null">
+                assess_status,
+            </if>
+            <if test="assessResult != null">
+                assess_result,
+            </if>
+            <if test="createdDate != null">
+                created_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="seasonId != null">
+                #{seasonId,jdbcType=BIGINT},
+            </if>
+            <if test="assessStatus != null">
+                #{assessStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="assessResult != null">
+                #{assessResult,jdbcType=TINYINT},
+            </if>
+            <if test="createdDate != null">
+                #{createdDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <insert id="insertList" useGeneratedKeys="true" keyProperty="id">
+        insert into user_season (id, user_id, season_id,
+        assess_status, assess_result, created_date
+        )
+        values
+        <foreach collection="list" item="po" separator=",">
+            (#{po.id,jdbcType=BIGINT}, #{po.userId,jdbcType=BIGINT}, #{po.seasonId,jdbcType=BIGINT},
+            #{po.assessStatus,jdbcType=VARCHAR}, #{po.assessResult,jdbcType=TINYINT},
+            #{po.createdDate,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mobvista.okr.domain.UserSeason">
+        update user_season
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="seasonId != null">
+                season_id = #{seasonId,jdbcType=BIGINT},
+            </if>
+            <if test="assessStatus != null">
+                assess_status = #{assessStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="assessResult != null">
+                assess_result = #{assessResult,jdbcType=TINYINT},
+            </if>
+            <if test="createdDate != null">
+                created_date = #{createdDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.mobvista.okr.domain.UserSeason">
+    update user_season
+    set user_id = #{userId,jdbcType=BIGINT},
+      season_id = #{seasonId,jdbcType=BIGINT},
+      assess_status = #{assessStatus,jdbcType=VARCHAR},
+      assess_result = #{assessResult,jdbcType=TINYINT},
+      created_date = #{createdDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <update id="updateList">
+        update user_season
+        set assess_status=
+        <foreach collection="list" item="item" index="index"
+                 separator=" " open="( case id" close="end )">
+            when #{item.id} then #{item.assessStatus}
+        </foreach>,
+        assess_result=
+        <foreach collection="list" item="item" index="index"
+                 separator=" " open="( case id" close="end )">
+            when #{item.id} then #{item.assessResult}
+        </foreach>
+        where id in
+        <foreach collection="list" index="index" item="item"
+                 separator="," open="(" close=")">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+</mapper>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobvista.okr.repository.UserReportRepository">
+    <resultMap id="BaseResultMap" type="com.mobvista.okr.domain.UserReport">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="reported_count" jdbcType="INTEGER" property="reportedCount"/>
+        <result column="assess_count" jdbcType="INTEGER" property="assessCount"/>
+        <result column="adjuster_count" jdbcType="INTEGER" property="adjusterCount"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="last_modify_date" jdbcType="TIMESTAMP" property="lastModifyDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, user_id, reported_count, assess_count, create_date, last_modify_date
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_report
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="findByUserId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        user_report
+        where user_id = #{userId}
+    </select>
+    <select id="queryAssessCountInfo" resultType="com.mobvista.okr.dto.UserReportDTO">
+        SELECT
+        ur.user_id userId,
+        ur.assess_count assessCount,
+        u.real_name userName
+        FROM user_report ur
+        INNER JOIN user_profile u on ur.user_id=u.id
+        ORDER BY ur.assess_count DESC LIMIT #{size}
+    </select>
+    <select id="queryAdjusterCountInfo" resultType="com.mobvista.okr.dto.UserReportDTO">
+        SELECT
+        ur.user_id userId,
+        ur.adjuster_count adjusterCount,
+        u.real_name userName
+        FROM user_report ur
+        INNER JOIN user_profile u on ur.user_id=u.id
+        ORDER BY ur.adjuster_count DESC LIMIT #{size}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user_report
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.mobvista.okr.domain.UserReport">
+    insert into user_report (id, user_id, reported_count,
+      assess_count, create_date, last_modify_date
+      )
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{reportedCount,jdbcType=INTEGER},
+      #{assessCount,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{lastModifyDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.mobvista.okr.domain.UserReport">
+        insert into user_report
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="reportedCount != null">
+                reported_count,
+            </if>
+            <if test="assessCount != null">
+                assess_count,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="lastModifyDate != null">
+                last_modify_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="reportedCount != null">
+                #{reportedCount,jdbcType=INTEGER},
+            </if>
+            <if test="assessCount != null">
+                #{assessCount,jdbcType=INTEGER},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastModifyDate != null">
+                #{lastModifyDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mobvista.okr.domain.UserReport">
+        update user_report
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="reportedCount != null">
+                reported_count = #{reportedCount,jdbcType=INTEGER},
+            </if>
+            <if test="assessCount != null">
+                assess_count = #{assessCount,jdbcType=INTEGER},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastModifyDate != null">
+                last_modify_date = #{lastModifyDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.mobvista.okr.domain.UserReport">
+    update user_report
+    set user_id = #{userId,jdbcType=BIGINT},
+      reported_count = #{reportedCount,jdbcType=INTEGER},
+      assess_count = #{assessCount,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      last_modify_date = #{lastModifyDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <update id="updateUserReportCount">
+    update user_report set reported_count = reported_count + 1 where id = #{id}
+  </update>
+    <update id="updateAssessCount">
+    update user_report set assess_count = assess_count + 1 where id = #{id}
+  </update>
+    <update id="updateAdjusterCount">
+        update user_report set adjuster_count = adjuster_count + #{num} where id = #{id}
+    </update>
+</mapper>

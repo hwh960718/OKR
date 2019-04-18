@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:text="${seasonTitle}">JHipster</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    </head>
+    <body style="padding: 30px">
+    <p style="font-style: italic; font-weight: bold" th:text="|Dear ${user.realName}:|">
+            Dear Jhipster:
+        </p>
+        <p style="margin-top: 40px; text-indent: 2rem; font-size: 1rem;">
+            <span th:text="|【${seasonTitle}】|"></span>的待评任务已生成，请尽快登陆OKR系统，点击待评任务，为同事季度考核评分!
+        </p>
+        <p style="margin: 60px; text-align: center; font-size: .8rem">
+          <a style="padding: 5px 10px; border: #666666 1px solid" th:href="@{|${baseUrl}/#/assessment_list/index|}">立即完成评价任务</a>
+        </p>
+        <p style="text-align: right; font-size: .8rem; font-style: italic; color: #6e6e6e">
+            <span>Mobvista OKR System</span>
+        </p>
+    </body>
+</html>

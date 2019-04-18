@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobvista.okr.repository.ProductShelfRepository">
+    <resultMap id="BaseResultMap" type="com.mobvista.okr.domain.ProductShelf">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="product_id" jdbcType="BIGINT" property="productId"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="score_increment" jdbcType="DECIMAL" property="scoreIncrement"/>
+        <result column="units" jdbcType="TINYINT" property="units"/>
+        <result column="shelf_count" jdbcType="INTEGER" property="shelfCount"/>
+        <result column="shelf_use_count" jdbcType="INTEGER" property="shelfUseCount"/>
+        <result column="valid_date_start" jdbcType="TIMESTAMP" property="validDateStart"/>
+        <result column="valid_date_end" jdbcType="TIMESTAMP" property="validDateEnd"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="modify_user_id" jdbcType="BIGINT" property="modifyUserId"/>
+        <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate"/>
+    </resultMap>
+
+    <resultMap id="productShelfDTOMap" type="com.mobvista.okr.dto.product.ProductShelfDTO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="product_id" jdbcType="BIGINT" property="productId"/>
+        <result column="name" jdbcType="VARCHAR" property="productName"/>
+        <result column="picture_path" jdbcType="VARCHAR" property="picturePath"/>
+        <result column="desc" jdbcType="VARCHAR" property="productDesc"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="productPrice" jdbcType="DECIMAL" property="productPrice"/>
+        <result column="productPrice" jdbcType="DECIMAL" property="productPrice"/>
+        <result column="score_increment" jdbcType="DECIMAL" property="scoreIncrement"/>
+        <result column="shelf_count" jdbcType="INTEGER" property="shelfCount"/>
+        <result column="shelf_use_count" jdbcType="INTEGER" property="shelfUseCount"/>
+        <result column="units" jdbcType="TINYINT" property="units"/>
+        <result column="valid_date_start" jdbcType="TIMESTAMP" property="validDateStart"/>
+        <result column="valid_date_end" jdbcType="TIMESTAMP" property="validDateEnd"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="modify_user_id" jdbcType="BIGINT" property="modifyUserId"/>
+        <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, product_id, `type`, `status`, price, score_increment, units, shelf_count,shelf_use_count, valid_date_start,
+    valid_date_end, create_user_id, create_date, modify_user_id, modify_date
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from product_shelf
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="queryListByProductIdAndStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from product_shelf
+        <where>
+            <if test="productId!=null">
+                and product_id = #{productId,jdbcType=BIGINT}
+            </if>
+            <if test="status !=null">
+                and status = #{status}
+            </if>
+            <if test="productShelfIdList !=null and productShelfIdList.size()>0">
+                and id in
+                <foreach collection="productShelfIdList" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <select id="countListByDto" resultType="java.lang.Integer">
+        select count(1) from product_shelf pp
+        <if test="dto.productName !=null">
+            inner join product p on pp.product_id = p.id
+        </if>
+        <where>
+            <if test="dto.type !=null and dto.type > 0">
+                and pp.type = #{dto.type}
+            </if>
+            <if test="dto.status !=null">
+                and pp.status = #{dto.status}
+            </if>
+            <if test="dto.productName !=null">
+                and p.name like CONCAT('%',#{dto.productName},'%')
+            </if>
+        </where>
+
+    </select>
+    <select id="queryListByDto" resultMap="productShelfDTOMap">
+        select pp.*,p.name,p.picture_path,p.price productPrice from product_shelf pp
+        inner join product p on pp.product_id = p.id
+        <where>
+            <if test="dto.type !=null and dto.type > 0">
+                and pp.type = #{dto.type}
+            </if>
+            <if test="dto.status !=null">
+                and pp.status = #{dto.status}
+            </if>
+            <if test="dto.productName !=null">
+                and p.name like CONCAT('%',#{dto.productName},'%')
+            </if>
+        </where>
+        order by pp.modify_date desc
+        limit #{start},#{size}
+    </select>
+    <select id="queryProductShelfInfoById" resultMap="productShelfDTOMap">
+        select pp.*,p.name,p.desc,p.picture_path,p.price productPrice from product_shelf pp
+        inner join product p on pp.product_id = p.id
+        where  pp.id = #{productShelfId}
+    </select>
+    <select id="queryAutoUpProductShelfId" resultType="java.lang.Long">
+         select id from  product_shelf
+        where  <![CDATA[valid_date_start <=  now() ]]> and valid_date_end >= now() and status = 2
+    </select>
+    <select id="queryProductShelfInfoByIdList" resultMap="productShelfDTOMap">
+        select pp.*,p.name,p.desc,p.picture_path,p.price productPrice from product_shelf pp
+        inner join product p on pp.product_id = p.id
+        where pp.id in
+        <foreach collection="list" item="productShelfId" open="(" separator="," close=")">
+            #{productShelfId}
+        </foreach>
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from product_shelf
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.mobvista.okr.domain.ProductShelf" useGeneratedKeys="true" keyProperty="id">
+    insert into product_shelf (id, product_id, `type`, 
+      `status`, price, score_increment, 
+      units, shelf_count,shelf_use_count, valid_date_start,
+      valid_date_end, create_user_id, create_date, 
+      modify_user_id, modify_date)
+    values (#{id,jdbcType=BIGINT}, #{productId,jdbcType=BIGINT}, #{type,jdbcType=TINYINT}, 
+      #{status,jdbcType=TINYINT}, #{price,jdbcType=DECIMAL}, #{scoreIncrement,jdbcType=DECIMAL}, 
+      #{units,jdbcType=TINYINT}, #{shelfCount,jdbcType=INTEGER},#{shelfUseCount,jdbcType=INTEGER}, #{validDateStart,jdbcType=TIMESTAMP},
+      #{validDateEnd,jdbcType=TIMESTAMP}, #{createUserId,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{modifyUserId,jdbcType=BIGINT}, #{modifyDate,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="com.mobvista.okr.domain.ProductShelf">
+        insert into product_shelf
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="productId != null">
+                product_id,
+            </if>
+            <if test="type != null">
+                `type`,
+            </if>
+            <if test="status != null">
+                `status`,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="scoreIncrement != null">
+                score_increment,
+            </if>
+            <if test="units != null">
+                units,
+            </if>
+            <if test="shelfCount != null">
+                shelf_count,
+            </if>
+            <if test="validDateStart != null">
+                valid_date_start,
+            </if>
+            <if test="validDateEnd != null">
+                valid_date_end,
+            </if>
+            <if test="createUserId != null">
+                create_user_id,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="modifyUserId != null">
+                modify_user_id,
+            </if>
+            <if test="modifyDate != null">
+                modify_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="productId != null">
+                #{productId,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=TINYINT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="price != null">
+                #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="scoreIncrement != null">
+                #{scoreIncrement,jdbcType=DECIMAL},
+            </if>
+            <if test="units != null">
+                #{units,jdbcType=TINYINT},
+            </if>
+            <if test="shelfCount != null">
+                #{shelfCount,jdbcType=INTEGER},
+            </if>
+            <if test="validDateStart != null">
+                #{validDateStart,jdbcType=TIMESTAMP},
+            </if>
+            <if test="validDateEnd != null">
+                #{validDateEnd,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUserId != null">
+                #{createUserId,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyUserId != null">
+                #{modifyUserId,jdbcType=BIGINT},
+            </if>
+            <if test="modifyDate != null">
+                #{modifyDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mobvista.okr.domain.ProductShelf">
+        update product_shelf
+        <set>
+            <if test="productId != null">
+                product_id = #{productId,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                `type` = #{type,jdbcType=TINYINT},
+            </if>
+            <if test="status != null">
+                `status` = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="price != null">
+                price = #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="scoreIncrement != null">
+                score_increment = #{scoreIncrement,jdbcType=DECIMAL},
+            </if>
+            <if test="units != null">
+                units = #{units,jdbcType=TINYINT},
+            </if>
+            <if test="shelfCount != null">
+                shelf_count = #{shelfCount,jdbcType=INTEGER},
+            </if>
+            <if test="validDateStart != null">
+                valid_date_start = #{validDateStart,jdbcType=TIMESTAMP},
+            </if>
+            <if test="validDateEnd != null">
+                valid_date_end = #{validDateEnd,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUserId != null">
+                create_user_id = #{createUserId,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyUserId != null">
+                modify_user_id = #{modifyUserId,jdbcType=BIGINT},
+            </if>
+            <if test="modifyDate != null">
+                modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.mobvista.okr.domain.ProductShelf">
+    update product_shelf
+    set product_id = #{productId,jdbcType=BIGINT},
+      `type` = #{type,jdbcType=TINYINT},
+      `status` = #{status,jdbcType=TINYINT},
+      price = #{price,jdbcType=DECIMAL},
+      score_increment = #{scoreIncrement,jdbcType=DECIMAL},
+      units = #{units,jdbcType=TINYINT},
+      shelf_count = #{shelfCount,jdbcType=INTEGER},
+      valid_date_start = #{validDateStart,jdbcType=TIMESTAMP},
+      valid_date_end = #{validDateEnd,jdbcType=TIMESTAMP},
+      create_user_id = #{createUserId,jdbcType=BIGINT},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      modify_user_id = #{modifyUserId,jdbcType=BIGINT},
+      modify_date = #{modifyDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <update id="updateAuctionProductShelfStatusEndByIdList">
+        update product_shelf
+        set `status` = #{status},
+        shelf_use_count = shelf_count
+        where id in
+        <foreach collection="productShelfIdList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    <update id="updateProductUseCount">
+          update product_shelf
+        set shelf_use_count = shelf_use_count+#{count}
+        where id =#{shelfId} and shelf_count - shelf_use_count -#{count} >=0
+    </update>
+    <update id="autoUpProductShelf">
+   update product_shelf
+   set status = 1 where  <![CDATA[valid_date_start <=  now() ]]> and valid_date_end >= now() and status = 2
+    </update>
+    <update id="updateExchangeProductShelfStatusDownByIdList">
+        update product_shelf
+        set `status` = #{status},
+        shelf_count = shelf_use_count
+        where id in
+        <foreach collection="productShelfIdList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

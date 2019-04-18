@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body style="padding: 30px">
+<p style="font-style: italic; font-weight: bold" th:text="|Dear ${vm.assessTaskUserName}:|">
+    Dear 评价人:
+</p>
+<p style="margin-top: 40px; text-indent: 2rem; font-size: 1rem;">
+    <span style="color: blue" th:text="|${vm.reportUserName}|">举报人</span> 举报您在"<span th:text="|${vm.seasonTitle}|">2018Q2季度考核</span>"的考核中对TA的评分存在不合理情况，经核查情况属实。
+</p>
+<p style="margin-top: 40px; text-indent: 2rem; font-size: 1rem;">
+    您对TA的评分将置为无效，若有疑问请联系处理人【<span style="color: blue" th:text="|${vm.verifyUserName}|">处理人</span>】。
+</p>
+
+<p style="text-align: right; font-size: .8rem; font-style: italic; color: #6e6e6e">
+    <span>Mobvista OKR System</span>
+</p>
+</body>
+
+</html>

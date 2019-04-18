@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobvista.okr.repository.SeasonRepository">
+    <resultMap id="BaseResultMap" type="com.mobvista.okr.domain.Season">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="first_stage_start_time" jdbcType="TIMESTAMP" property="firstStageStartTime"/>
+        <result column="first_stage_end_time" jdbcType="TIMESTAMP" property="firstStageEndTime"/>
+        <result column="second_stage_start_time" jdbcType="TIMESTAMP" property="secondStageStartTime"/>
+        <result column="second_stage_end_time" jdbcType="TIMESTAMP" property="secondStageEndTime"/>
+        <result column="is_make_assess_task" jdbcType="BIT" property="isMakeAssessTask"/>
+        <result column="is_make_season_score" jdbcType="BIT" property="isMakeSeasonScore"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="created_date" jdbcType="TIMESTAMP" property="createdDate"/>
+        <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, title, start_time, end_time, first_stage_start_time, first_stage_end_time, second_stage_start_time, 
+    second_stage_end_time, is_make_assess_task, is_make_season_score, status, created_date, 
+    last_modified_date
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from season
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="findFirstByCreatedDateDesc" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from season where id!= #{userSeasonId} and status in(2,3) order by created_date desc LIMIT 1
+    </select>
+    <select id="findOneByTitle" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from season where title = #{title}
+    </select>
+    <select id="findAllBySeason" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from season
+        where status = #{season.status}
+        <if test="season.isMakeAssessTask !=null">
+            and is_make_assess_task = #{season.isMakeAssessTask}
+        </if>
+        <if test="season.isMakeSeasonScore !=null">
+            and is_make_season_score = #{season.isMakeSeasonScore}
+        </if>
+        <if test="season.secondStageStartTime !=null">
+            <![CDATA[ and second_stage_start_time <= #{season.secondStageStartTime}]]>
+        </if>
+        <if test="season.secondStageEndTime !=null">
+            <![CDATA[ and second_stage_end_time <= #{season.secondStageEndTime}]]>
+        </if>
+        order by id DESC,start_time DESC
+        <if test="pageSize > 0">
+            LIMIT #{start},#{pageSize}
+        </if>
+    </select>
+    <select id="countPage" resultType="java.lang.Long">
+        select count(1) from season
+    </select>
+    <select id="queryPage" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from season
+        order by id desc,start_time desc
+        limit #{start},#{pageSize}
+    </select>
+    <select id="queryAllSeasonYear" resultType="java.lang.String">
+        SELECT DATE_FORMAT(start_time, '%Y') as yearName FROM season s
+        WHERE s.`status` IN
+        <foreach collection="list" item="status" open="(" separator="," close=")">
+            #{status}
+        </foreach>
+        GROUP BY yearName ORDER BY yearName DESC
+    </select>
+    <select id="queryAllBySeasonStatusAndYear" resultType="com.mobvista.okr.dto.SeasonDTO">
+        SELECT
+        id AS id,
+        title AS title,
+        start_time AS startTime,
+        end_time AS endTime,
+        first_stage_start_time AS firstStageStartTime,
+        first_stage_end_time AS firstStageEndTime,
+        second_stage_start_time AS secondStageStartTime,
+        second_stage_end_time AS secondStageEndTime,
+        STATUS AS STATUS,
+        created_date AS createdDate
+        FROM
+        season s
+        WHERE
+        s.`status` in
+        <foreach collection="list" item="status" open="(" separator="," close=")">
+            #{status}
+        </foreach>
+        AND DATE_FORMAT( s.start_time, '%Y' ) = #{year}
+        ORDER BY
+        id DESC,
+        s.start_time DESC
+    </select>
+    <select id="findByIdIn" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from season
+        where id IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from season
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.mobvista.okr.domain.Season">
+    insert into season (id, title, start_time, 
+      end_time, first_stage_start_time, first_stage_end_time, 
+      second_stage_start_time, second_stage_end_time, 
+      is_make_assess_task, is_make_season_score, status, 
+      created_date, last_modified_date)
+    values (#{id,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{endTime,jdbcType=TIMESTAMP}, #{firstStageStartTime,jdbcType=TIMESTAMP}, #{firstStageEndTime,jdbcType=TIMESTAMP}, 
+      #{secondStageStartTime,jdbcType=TIMESTAMP}, #{secondStageEndTime,jdbcType=TIMESTAMP}, 
+      #{isMakeAssessTask,jdbcType=BIT}, #{isMakeSeasonScore,jdbcType=BIT}, #{status,jdbcType=VARCHAR}, 
+      #{createdDate,jdbcType=TIMESTAMP}, #{lastModifiedDate,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="com.mobvista.okr.domain.Season">
+        insert into season
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="startTime != null">
+                start_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="firstStageStartTime != null">
+                first_stage_start_time,
+            </if>
+            <if test="firstStageEndTime != null">
+                first_stage_end_time,
+            </if>
+            <if test="secondStageStartTime != null">
+                second_stage_start_time,
+            </if>
+            <if test="secondStageEndTime != null">
+                second_stage_end_time,
+            </if>
+            <if test="isMakeAssessTask != null">
+                is_make_assess_task,
+            </if>
+            <if test="isMakeSeasonScore != null">
+                is_make_season_score,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="createdDate != null">
+                created_date,
+            </if>
+            <if test="lastModifiedDate != null">
+                last_modified_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="startTime != null">
+                #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="firstStageStartTime != null">
+                #{firstStageStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="firstStageEndTime != null">
+                #{firstStageEndTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="secondStageStartTime != null">
+                #{secondStageStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="secondStageEndTime != null">
+                #{secondStageEndTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isMakeAssessTask != null">
+                #{isMakeAssessTask,jdbcType=BIT},
+            </if>
+            <if test="isMakeSeasonScore != null">
+                #{isMakeSeasonScore,jdbcType=BIT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="createdDate != null">
+                #{createdDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastModifiedDate != null">
+                #{lastModifiedDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mobvista.okr.domain.Season">
+        update season
+        <set>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="firstStageStartTime != null">
+                first_stage_start_time = #{firstStageStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="firstStageEndTime != null">
+                first_stage_end_time = #{firstStageEndTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="secondStageStartTime != null">
+                second_stage_start_time = #{secondStageStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="secondStageEndTime != null">
+                second_stage_end_time = #{secondStageEndTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isMakeAssessTask != null">
+                is_make_assess_task = #{isMakeAssessTask,jdbcType=BIT},
+            </if>
+            <if test="isMakeSeasonScore != null">
+                is_make_season_score = #{isMakeSeasonScore,jdbcType=BIT},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="createdDate != null">
+                created_date = #{createdDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastModifiedDate != null">
+                last_modified_date = #{lastModifiedDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.mobvista.okr.domain.Season">
+    update season
+    set title = #{title,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      first_stage_start_time = #{firstStageStartTime,jdbcType=TIMESTAMP},
+      first_stage_end_time = #{firstStageEndTime,jdbcType=TIMESTAMP},
+      second_stage_start_time = #{secondStageStartTime,jdbcType=TIMESTAMP},
+      second_stage_end_time = #{secondStageEndTime,jdbcType=TIMESTAMP},
+      is_make_assess_task = #{isMakeAssessTask,jdbcType=BIT},
+      is_make_season_score = #{isMakeSeasonScore,jdbcType=BIT},
+      status = #{status,jdbcType=VARCHAR},
+      created_date = #{createdDate,jdbcType=TIMESTAMP},
+      last_modified_date = #{lastModifiedDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobvista.okr.repository.DepartmentRepository">
+    <resultMap id="BaseResultMap" type="com.mobvista.okr.domain.Department">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="level" jdbcType="INTEGER" property="level"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="leader_code" jdbcType="BIGINT" property="leaderCode"/>
+        <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, name, level, parent_id, leader_code, last_modified_date
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from department
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="findAllByLevelAndNameIn" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from department
+        where `level` = #{level}
+        and `name` in
+        <foreach collection="nameList" item="name" open="(" close=")" separator=",">
+            #{name}
+        </foreach>
+    </select>
+    <select id="findAllByParentIdIn" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from department
+        where parent_id in
+        <foreach collection="list" item="parentId" open="(" close=")" separator=",">
+            #{parentId}
+        </foreach>
+    </select>
+    <select id="findAllByLeaderCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from department
+        where leader_code = #{leaderCode}
+    </select>
+    <select id="findAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from department
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from department
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.mobvista.okr.domain.Department">
+    insert into department (id, name, level, 
+      parent_id, leader_code, last_modified_date
+      )
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, 
+      #{parentId,jdbcType=BIGINT}, #{leaderCode,jdbcType=BIGINT}, #{lastModifiedDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.mobvista.okr.domain.Department">
+        insert into department
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="level != null">
+                level,
+            </if>
+            <if test="parentId != null">
+                parent_id,
+            </if>
+            <if test="leaderCode != null">
+                leader_code,
+            </if>
+            <if test="lastModifiedDate != null">
+                last_modified_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="level != null">
+                #{level,jdbcType=INTEGER},
+            </if>
+            <if test="parentId != null">
+                #{parentId,jdbcType=BIGINT},
+            </if>
+            <if test="leaderCode != null">
+                #{leaderCode,jdbcType=BIGINT},
+            </if>
+            <if test="lastModifiedDate != null">
+                #{lastModifiedDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <insert id="insertList">
+        insert into department (id, name, level,
+        parent_id, leader_code, last_modified_date
+        )
+        values
+        <foreach collection="list" item="po" separator=",">
+            (#{po.id,jdbcType=BIGINT}, #{po.name,jdbcType=VARCHAR}, #{po.level,jdbcType=INTEGER},
+            #{po.parentId,jdbcType=BIGINT}, #{po.leaderCode,jdbcType=BIGINT}, #{po.lastModifiedDate,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mobvista.okr.domain.Department">
+        update department
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="level != null">
+                level = #{level,jdbcType=INTEGER},
+            </if>
+            <if test="parentId != null">
+                parent_id = #{parentId,jdbcType=BIGINT},
+            </if>
+            <if test="leaderCode != null">
+                leader_code = #{leaderCode,jdbcType=BIGINT},
+            </if>
+            <if test="lastModifiedDate != null">
+                last_modified_date = #{lastModifiedDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.mobvista.okr.domain.Department">
+    update department
+    set name = #{name,jdbcType=VARCHAR},
+      level = #{level,jdbcType=INTEGER},
+      parent_id = #{parentId,jdbcType=BIGINT},
+      leader_code = #{leaderCode,jdbcType=BIGINT},
+      last_modified_date = #{lastModifiedDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <update id="updateList">
+        update department
+        <set>
+            `name` =
+            <foreach collection="list" item="item" index="index"
+                     separator=" " open="( case id" close="end )">
+                when #{item.id} then #{item.name}
+            </foreach>,
+            `level` =
+            <foreach collection="list" item="item" index="index"
+                     separator=" " open="( case id" close="end )">
+                when #{item.id} then #{item.level}
+            </foreach>,
+            parent_id=
+            <foreach collection="list" item="item" index="index"
+                     separator=" " open="( case id" close="end )">
+                when #{item.id} then #{item.parentId}
+            </foreach>,
+            leader_code=
+            <foreach collection="list" item="item" index="index"
+                     separator=" " open="( case id" close="end )">
+                when #{item.id} then #{item.leaderCode}
+            </foreach>,
+            last_modified_date=
+            <foreach collection="list" item="item" index="index"
+                     separator=" " open="( case id" close="end )">
+                when #{item.id} then #{item.lastModifiedDate}
+            </foreach>
+        </set>
+        where id in
+        <foreach collection="list" index="index" item="item"
+                 separator="," open="(" close=")">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+</mapper>

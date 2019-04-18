@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body style="padding: 30px">
+<p style="font-style: italic; font-weight: bold">
+    Dear:
+    <br/>&nbsp;&nbsp;&nbsp;&nbsp; 积分商城商品兑换或竞拍即将结束。具体信息如下：
+</p>
+
+
+<table th:each="productShelfDTO : ${productShelfDTOList}">
+    <tr>
+        <td style="font-weight: bold">
+            商品信息：
+        </td>
+        <td>
+            <p style="font-style: italic; font-weight: bold" th:text="|  ${productShelfDTO.productName}|"></p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            类型：
+        </td>
+        <td>
+            <p style="font-style: italic; font-weight: bold" th:text="|  ${productShelfDTO.typeText}|"></p>
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            商品价值：
+        </td>
+        <td>
+            <p style="font-style: italic; font-weight: bold" th:text="|  ${productShelfDTO.productPrice} RMB|"></p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            价格：
+        </td>
+        <td>
+            <p style="font-style: italic; font-weight: bold"
+               th:text="|  ${#numbers.formatDecimal(productShelfDTO.price,0,'COMMA',0,'POINT')} 积分|"></p>
+        </td>
+    </tr>
+    <tr th:if="${productShelfDTO.type==2}">
+        <td>
+            最终价格：
+        </td>
+        <td>
+            <p style="font-style: italic; font-weight: bold"
+               th:text="|  ${#numbers.formatDecimal(productShelfDTO.currentPrice,0,'COMMA',0,'POINT')} 积分|"></p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p style="font-style: italic; font-weight: bold" th:text="|  ${productShelfDTO.typeText}开始时间:|"></p>
+
+        </td>
+        <td>
+            <p style="font-style: italic; font-weight: bold"
+               th:text="|  ${#dates.format(productShelfDTO.validDateStart,'yyyy-MM-dd')}|"></p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p style="font-style: italic; font-weight: bold" th:text="|  ${productShelfDTO.typeText}结束时间:|"></p>
+        </td>
+        <td>
+            <p style="font-style: italic; font-weight: bold"
+               th:text="|  ${#dates.format(productShelfDTO.validDateEnd,'yyyy-MM-dd')}|"></p>
+        </td>
+    </tr>
+    <hr/>
+</table>
+</body>
+</html>

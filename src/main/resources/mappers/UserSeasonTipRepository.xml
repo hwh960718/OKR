@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobvista.okr.repository.UserSeasonTipRepository">
+    <resultMap id="BaseResultMap" type="com.mobvista.okr.domain.UserSeasonTip">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="assessor_id" jdbcType="BIGINT" property="assessorId"/>
+        <result column="tip_id" jdbcType="BIGINT" property="tipId"/>
+        <result column="color" jdbcType="VARCHAR" property="color"/>
+        <result column="created_date" jdbcType="TIMESTAMP" property="createdDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, user_id, assessor_id, tip_id, color, created_date
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_season_tip
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="findAllByUserId" resultType="com.mobvista.okr.dto.UserTipDTO">
+        select
+        ust.id userSeasonTipId,
+        ust.created_date createdDate,
+        t.title,
+        SUM(1) titleCount
+        from user_season_tip ust
+        inner join tip t on ust.tip_id = t.id
+        where ust.user_id = #{userSeasonId}
+        GROUP BY tip_id
+    </select>
+    <select id="countByUserIdAndTipIdAndUserId" resultType="java.lang.Long">
+      select count(1) from user_season_tip where  user_id = #{userId} and tip_id = #{tipId} and assessor_id = #{assessorId}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user_season_tip
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <delete id="delByTipIdAndAssessorId">
+     delete from user_season_tip where  assessor_id = #{assessorId} and tip_id = #{tipId} and  user_id = #{userId}
+    </delete>
+    <insert id="insert" parameterType="com.mobvista.okr.domain.UserSeasonTip">
+    insert into user_season_tip (id, user_id, assessor_id,
+      tip_id, color, created_date
+      )
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{assessorId,jdbcType=BIGINT},
+      #{tipId,jdbcType=BIGINT}, #{color,jdbcType=VARCHAR}, #{createdDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.mobvista.okr.domain.UserSeasonTip">
+        insert into user_season_tip
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="assessorId != null">
+                assessor_id,
+            </if>
+            <if test="tipId != null">
+                tip_id,
+            </if>
+            <if test="color != null">
+                color,
+            </if>
+            <if test="createdDate != null">
+                created_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="assessorId != null">
+                #{assessorId,jdbcType=BIGINT},
+            </if>
+            <if test="tipId != null">
+                #{tipId,jdbcType=BIGINT},
+            </if>
+            <if test="color != null">
+                #{color,jdbcType=VARCHAR},
+            </if>
+            <if test="createdDate != null">
+                #{createdDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mobvista.okr.domain.UserSeasonTip">
+        update user_season_tip
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="assessorId != null">
+                assessor_id = #{assessorId,jdbcType=BIGINT},
+            </if>
+            <if test="tipId != null">
+                tip_id = #{tipId,jdbcType=BIGINT},
+            </if>
+            <if test="color != null">
+                color = #{color,jdbcType=VARCHAR},
+            </if>
+            <if test="createdDate != null">
+                created_date = #{createdDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.mobvista.okr.domain.UserSeasonTip">
+    update user_season_tip
+    set user_id = #{userId,jdbcType=BIGINT},
+      assessor_id = #{assessorId,jdbcType=BIGINT},
+      tip_id = #{tipId,jdbcType=BIGINT},
+      color = #{color,jdbcType=VARCHAR},
+      created_date = #{createdDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

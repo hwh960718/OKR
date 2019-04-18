@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobvista.okr.repository.UserSeasonItemRepository">
+    <resultMap id="BaseResultMap" type="com.mobvista.okr.domain.UserSeasonItem">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_season_id" jdbcType="BIGINT" property="userSeasonId"/>
+        <result column="option_id" jdbcType="BIGINT" property="optionId"/>
+        <result column="score" jdbcType="DECIMAL" property="score"/>
+        <result column="ranking" jdbcType="INTEGER" property="ranking"/>
+        <result column="created_date" jdbcType="TIMESTAMP" property="createdDate"/>
+        <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, user_season_id, option_id, score, ranking, created_date, last_modified_date
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_season_item
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="findAllByUserSeasonIdIn" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_season_item
+        where user_season_id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="findOneByUserSeasonIdAndOptionId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_season_item
+        where user_season_id =#{userSeasonId} and option_id = #{optionId}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user_season_item
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.mobvista.okr.domain.UserSeasonItem">
+    insert into user_season_item (id, user_season_id, option_id,
+      score, ranking, created_date,
+      last_modified_date)
+    values (#{id,jdbcType=BIGINT}, #{userSeasonId,jdbcType=BIGINT}, #{optionId,jdbcType=BIGINT},
+      #{score,jdbcType=DECIMAL}, #{ranking,jdbcType=INTEGER}, #{createdDate,jdbcType=TIMESTAMP},
+      #{lastModifiedDate,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="com.mobvista.okr.domain.UserSeasonItem">
+        insert into user_season_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userSeasonId != null">
+                user_season_id,
+            </if>
+            <if test="optionId != null">
+                option_id,
+            </if>
+            <if test="score != null">
+                score,
+            </if>
+            <if test="ranking != null">
+                ranking,
+            </if>
+            <if test="createdDate != null">
+                created_date,
+            </if>
+            <if test="lastModifiedDate != null">
+                last_modified_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="userSeasonId != null">
+                #{userSeasonId,jdbcType=BIGINT},
+            </if>
+            <if test="optionId != null">
+                #{optionId,jdbcType=BIGINT},
+            </if>
+            <if test="score != null">
+                #{score,jdbcType=DECIMAL},
+            </if>
+            <if test="ranking != null">
+                #{ranking,jdbcType=INTEGER},
+            </if>
+            <if test="createdDate != null">
+                #{createdDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastModifiedDate != null">
+                #{lastModifiedDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <insert id="insertList">
+        insert into user_season_item (id, user_season_id, option_id,
+        score, ranking, created_date,
+        last_modified_date)
+        values
+        <foreach collection="list" item="po" separator=",">
+            (#{po.id,jdbcType=BIGINT}, #{po.userSeasonId,jdbcType=BIGINT}, #{po.optionId,jdbcType=BIGINT},
+            #{po.score,jdbcType=DECIMAL}, #{po.ranking,jdbcType=INTEGER}, #{po.createdDate,jdbcType=TIMESTAMP},
+            #{po.lastModifiedDate,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mobvista.okr.domain.UserSeasonItem">
+        update user_season_item
+        <set>
+            <if test="userSeasonId != null">
+                user_season_id = #{userSeasonId,jdbcType=BIGINT},
+            </if>
+            <if test="optionId != null">
+                option_id = #{optionId,jdbcType=BIGINT},
+            </if>
+            <if test="score != null">
+                score = #{score,jdbcType=DECIMAL},
+            </if>
+            <if test="ranking != null">
+                ranking = #{ranking,jdbcType=INTEGER},
+            </if>
+            <if test="createdDate != null">
+                created_date = #{createdDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastModifiedDate != null">
+                last_modified_date = #{lastModifiedDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.mobvista.okr.domain.UserSeasonItem">
+    update user_season_item
+    set user_season_id = #{userSeasonId,jdbcType=BIGINT},
+      option_id = #{optionId,jdbcType=BIGINT},
+      score = #{score,jdbcType=DECIMAL},
+      ranking = #{ranking,jdbcType=INTEGER},
+      created_date = #{createdDate,jdbcType=TIMESTAMP},
+      last_modified_date = #{lastModifiedDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <update id="updateList">
+        update user_season_item
+        set score=
+        <foreach collection="list" item="item" index="index"
+                 separator=" " open="( case id" close="end )">
+            when #{item.id} then #{item.score}
+        </foreach>,
+        ranking=
+        <foreach collection="list" item="item" index="index"
+                 separator=" " open="( case id" close="end )">
+            when #{item.id} then #{item.ranking}
+        </foreach>,
+        last_modified_date=now()
+        where id in
+        <foreach collection="list" index="index" item="item"
+                 separator="," open="(" close=")">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+
+
+    </update>
+</mapper>

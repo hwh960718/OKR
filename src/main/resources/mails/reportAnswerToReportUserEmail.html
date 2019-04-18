@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body style="padding: 30px">
+<p style="font-style: italic; font-weight: bold" th:text="|Dear ${vm.reportUserName}:|">
+    Dear Jhipster:
+</p>
+<p style="margin-top: 40px; text-indent: 2rem; font-size: 1rem;">
+    您提交的关于<span style="color: blue" th:text="|${vm.assessTaskUserName}|">Jhipster</span>对你的评分不合理情况，我们已经处理。
+</p>
+<p style="margin-top: 40px; text-indent: 2rem; font-size: 1rem;" th:if="${vm.status==2}">
+    经核查情况属实，我们将重新计算您的评分和排名。
+</p>
+<p style="margin-top: 40px; text-indent: 2rem; font-size: 1rem;" th:if="${vm.status==3}">
+    经核查评分合理，若仍有疑问请联系处理人。
+</p>
+<p style="margin-top: 40px; text-indent: 2rem; font-size: 1rem;">
+    处理人：<span style="color: blue" th:text="|${vm.verifyUserName}|">Jhipster</span>
+</p>
+<p style="text-align: right; font-size: .8rem; font-style: italic; color: #6e6e6e">
+    <span>Mobvista OKR System</span>
+</p>
+</body>
+
+</html>

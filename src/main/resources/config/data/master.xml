@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <include file="classpath:config/liquibase/base/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/base/201712290000002_added_entity_UserInfo.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/base/201712290000003_added_entity_Department.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/base/201712290000004_added_entity_Season.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/base/201712290000005_added_entity_Adjuster.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/base/201712290000006_added_entity_ScoreOption.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/base/201712290000007_added_entity_UserSeason.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/base/201712290000008_added_entity_UserSeasonItem.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/base/201712290000009_added_entity_AssessTask.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/base/2017122900000010_added_entity_AssessTaskItem.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/base/2017122900000011_added_entity_Notice.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/base/2017122900000012_added_entity_UserSeasonTip.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/base/2017122900000013_added_entity_UserSeasonComment.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/base/2017122900000014_added_entity_UserSeasonCommentTop.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/base/2017122900000015_added_entity_OkrContent.xml" relativeToChangelogFile="false"/>
+
+    <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
+    <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
+</databaseChangeLog>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body style="padding: 30px">
+<h4>反馈信息：</h4>
+<p style="font-style: italic" th:text="| ${message}|">
+</p>
+
+<table>
+    <tr>
+        <td style="font-weight: bold">
+            反馈人
+        </td>
+        <td>
+            <p style="font-style: italic; font-weight: bold" th:text="|  ${userInfo.realName}|"></p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            邮箱
+        </td>
+        <td>
+            <p style="font-style: italic; font-weight: bold" th:text="|  ${userInfo.email}|"></p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            部门名称
+        </td>
+        <td>
+            <p style="font-style: italic; font-weight: bold" th:text="|  ${userInfo.departmentName}|"></p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            职位名称
+        </td>
+        <td>
+            <p style="font-style: italic; font-weight: bold" th:text="|  ${userInfo.jobName}|"></p>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

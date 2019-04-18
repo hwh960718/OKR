@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobvista.okr.repository.OrderInfoRepository">
+    <resultMap id="BaseResultMap" type="com.mobvista.okr.domain.OrderInfo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
+        <result column="product_id" jdbcType="BIGINT" property="productId"/>
+        <result column="shelf_id" jdbcType="BIGINT" property="shelfId"/>
+        <result column="shelf_type" jdbcType="TINYINT" property="shelfType"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="modify_user_id" jdbcType="BIGINT" property="modifyUserId"/>
+        <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate"/>
+    </resultMap>
+    <resultMap id="dtoBaseResultMap" type="com.mobvista.okr.dto.product.OrderInfoDTO">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
+        <result column="name" jdbcType="VARCHAR" property="productName"/>
+        <result column="product_id" jdbcType="BIGINT" property="productId"/>
+        <result column="shelf_id" jdbcType="BIGINT" property="shelfId"/>
+        <result column="shelf_type" jdbcType="TINYINT" property="shelfType"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="createUserName" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, order_no, product_id, shelf_id, shelf_type, `status`, price, order_num, create_user_id,
+    create_date
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from order_info
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="countListByDto" resultType="java.lang.Integer">
+        select count(1) from order_info oi
+        inner join product p on oi.product_id = p.id
+        <where>
+            <if test="dto.orderNo != null">
+                and oi.order_no like CONCAT('%',#{dto.orderNo,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="dto.productName != null">
+                and p.name like CONCAT('%',#{dto.productName,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="dto.productId != null">
+                and oi.product_id=#{dto.productId,jdbcType=BIGINT}
+            </if>
+            <if test="dto.shelfId != null">
+                and oi.shelf_id=#{dto.shelfId,jdbcType=BIGINT}
+            </if>
+            <if test="dto.shelfType != null and dto.shelfType > 0">
+                and oi.shelf_type=#{dto.shelfType,jdbcType=TINYINT}
+            </if>
+            <if test="dto.statusList != null and dto.statusList.size()>0">
+                and oi.`status` IN
+                <foreach collection="dto.statusList" item="status" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+            </if>
+            <if test="dto.price != null">
+                and oi.price=#{dto.price,jdbcType=INTEGER}
+            </if>
+            <if test="dto.createUserId != null">
+                and oi.create_user_id = #{dto.createUserId,jdbcType=BIGINT}
+            </if>
+            <if test="dto.createDate != null">
+                and oi.create_date =#{dto.createDate,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+    <select id="queryListByDto" resultMap="dtoBaseResultMap">
+        select oi.*,p.name,
+        u.real_name createUserName
+        from order_info oi
+        inner join product p on oi.product_id = p.id
+        inner join user_profile u on u.id = oi.create_user_id
+        <where>
+            <if test="dto.orderNo != null">
+                and oi.order_no like CONCAT('%',#{dto.orderNo,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="dto.productName != null">
+                and p.name like CONCAT('%',#{dto.productName,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="dto.productId != null">
+                and oi.product_id=#{dto.productId,jdbcType=BIGINT}
+            </if>
+            <if test="dto.shelfId != null">
+                and oi.shelf_id=#{dto.shelfId,jdbcType=BIGINT}
+            </if>
+            <if test="dto.shelfType != null and dto.shelfType > 0">
+                and oi.shelf_type=#{dto.shelfType,jdbcType=TINYINT}
+            </if>
+            <if test="dto.statusList != null and dto.statusList.size()>0">
+                and oi.`status` IN
+                <foreach collection="dto.statusList" item="status" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+            </if>
+            <if test="dto.price != null">
+                and oi.price=#{dto.price,jdbcType=INTEGER}
+            </if>
+            <if test="dto.createUserId != null">
+                and oi.create_user_id = #{dto.createUserId,jdbcType=BIGINT}
+            </if>
+            <if test="dto.createDate != null">
+                and oi.create_date =#{dto.createDate,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+        order by oi.create_date desc
+        limit #{start},#{size}
+    </select>
+    <select id="queryOrderInfo" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from order_info
+        <where>
+            <if test="orderNo != null">
+                and order_no= #{orderNo,jdbcType=VARCHAR}
+            </if>
+            <if test="productId != null">
+                and product_id=#{productId,jdbcType=BIGINT}
+            </if>
+            <if test="shelfId != null">
+                and shelf_id=#{shelfId,jdbcType=BIGINT}
+            </if>
+            <if test="shelfType != null and shelfType > 0">
+                and shelf_type=#{shelfType,jdbcType=TINYINT}
+            </if>
+            <if test="status != null">
+                and `status`= #{status,jdbcType=TINYINT}
+            </if>
+            <if test="price != null">
+                and price=#{price,jdbcType=INTEGER}
+            </if>
+            <if test="createUserId != null">
+                and create_user_id = #{createUserId,jdbcType=BIGINT}
+            </if>
+            <if test="createDate != null">
+                and create_date =#{createDate,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+        order by price desc
+    </select>
+    <select id="queryOrderInfoListByIdAndStatusList" resultType="com.mobvista.okr.domain.OrderInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from order_info
+        <where>
+            <if test="shelfId != null">
+                and shelf_id=#{shelfId,jdbcType=BIGINT}
+            </if>
+            <if test="statusList != null and statusList.size()>0">
+                and `status` IN
+                <foreach collection="statusList" item="status" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+            </if>
+
+        </where>
+        order by price desc
+    </select>
+    <select id="queryOrderInfoListByIdListAndStatusList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from order_info
+        <where>
+            <if test="shelfIdList != null">
+                and shelf_id in
+                <foreach collection="shelfIdList" item="shelfId" open="(" separator="," close=")">
+                    #{shelfId}
+                </foreach>
+            </if>
+            <if test="statusList != null and statusList.size()>0">
+                and `status` IN
+                <foreach collection="statusList" item="status" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+            </if>
+        </where>
+        order by price desc
+    </select>
+    <select id="queryOrderInfoByShelfIdAndStatus" resultType="com.mobvista.okr.dto.product.OrderEmailInfoDTO">
+        select
+          oi.id orderId,
+          ps.product_id productId,
+          p.name productName,
+          ps.id shelfId,
+          ps.type shelfType,
+          oi.status,
+          oi.order_num orderNum,
+          oi.price price,
+          p.price productPrice,
+          oi.create_user_id createUserId,
+          u.real_name createUserName,
+          u.email createUserEmail
+        from order_info oi
+        inner join  product_shelf ps on oi.shelf_id = ps.id
+        inner join  product p on ps.product_id = p.id
+        inner join  user_profile u on oi.create_user_id = u.id
+        where  oi.shelf_id = #{shelfId} and oi.status = #{status}
+    </select>
+    <select id="queryOrderInfoByOrderId" resultType="com.mobvista.okr.dto.product.OrderEmailInfoDTO">
+         select
+          oi.id orderId,
+          ps.product_id productId,
+          p.name productName,
+          ps.id shelfId,
+          ps.type shelfType,
+          oi.status,
+          oi.order_num orderNum,
+          oi.price price,
+          p.price productPrice,
+          oi.create_user_id createUserId,
+          u.real_name createUserName,
+          u.email createUserEmail
+        from order_info oi
+        inner join  product_shelf ps on oi.shelf_id = ps.id
+        inner join  product p on ps.product_id = p.id
+        inner join  user_profile u on oi.create_user_id = u.id
+        where  oi.id = #{orderId}
+    </select>
+    <select id="queryOrderInfoByOrderIdList" resultType="com.mobvista.okr.dto.product.OrderEmailInfoDTO">
+        select
+        oi.id orderId,
+        ps.product_id productId,
+        p.name productName,
+        ps.id shelfId,
+        ps.type shelfType,
+        oi.status,
+        oi.order_num orderNum,
+        oi.price price,
+        p.price productPrice,
+        oi.create_user_id createUserId,
+        u.real_name createUserName,
+        u.email createUserEmail
+        from order_info oi
+        inner join product_shelf ps on oi.shelf_id = ps.id
+        inner join product p on ps.product_id = p.id
+        inner join user_profile u on oi.create_user_id = u.id
+        where oi.id in
+        <foreach collection="list" item="orderId" open="(" separator="," close=")">
+            #{orderId}
+        </foreach>
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from order_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.mobvista.okr.domain.OrderInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into order_info (id, order_no, product_id, 
+      shelf_id, shelf_type, `status`, 
+      price, order_num, create_user_id,
+      create_date)
+    values (#{id,jdbcType=BIGINT}, #{orderNo,jdbcType=VARCHAR}, #{productId,jdbcType=BIGINT},
+      #{shelfId,jdbcType=BIGINT}, #{shelfType,jdbcType=TINYINT}, #{status,jdbcType=TINYINT}, 
+      #{price,jdbcType=DECIMAL}, #{orderNum,jdbcType=INTEGER}, #{createUserId,jdbcType=BIGINT},
+      #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="com.mobvista.okr.domain.OrderInfo">
+        insert into order_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="orderNo != null">
+                order_no,
+            </if>
+            <if test="productId != null">
+                product_id,
+            </if>
+            <if test="shelfId != null">
+                shelf_id,
+            </if>
+            <if test="shelfType != null">
+                shelf_type,
+            </if>
+            <if test="status != null">
+                `status`,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="orderNum != null">
+                order_num,
+            </if>
+            <if test="createUserId != null">
+                create_user_id,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="orderNo != null">
+                #{orderNo,jdbcType=VARCHAR},
+            </if>
+            <if test="productId != null">
+                #{productId,jdbcType=BIGINT},
+            </if>
+            <if test="shelfId != null">
+                #{shelfId,jdbcType=BIGINT},
+            </if>
+            <if test="shelfType != null">
+                #{shelfType,jdbcType=TINYINT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="price != null">
+                #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="orderNum != null">
+                #{orderNum,jdbcType=INTEGER},
+            </if>
+            <if test="createUserId != null">
+                #{createUserId,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mobvista.okr.domain.OrderInfo">
+        update order_info
+        <set>
+            <if test="orderNo != null">
+                order_no = #{orderNo,jdbcType=VARCHAR},
+            </if>
+            <if test="productId != null">
+                product_id = #{productId,jdbcType=BIGINT},
+            </if>
+            <if test="shelfId != null">
+                shelf_id = #{shelfId,jdbcType=BIGINT},
+            </if>
+            <if test="shelfType != null">
+                shelf_type = #{shelfType,jdbcType=TINYINT},
+            </if>
+            <if test="status != null">
+                `status` = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="price != null">
+                price = #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="orderNum != null">
+                order_num = #{orderNum,jdbcType=INTEGER},
+            </if>
+            <if test="createUserId != null">
+                create_user_id = #{createUserId,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.mobvista.okr.domain.OrderInfo">
+    update order_info
+    set order_no = #{orderNo,jdbcType=VARCHAR},
+      product_id = #{productId,jdbcType=BIGINT},
+      shelf_id = #{shelfId,jdbcType=BIGINT},
+      shelf_type = #{shelfType,jdbcType=TINYINT},
+      `status` = #{status,jdbcType=TINYINT},
+      price = #{price,jdbcType=DECIMAL},
+      order_num = #{orderNum,jdbcType=INTEGER},
+      create_user_id = #{createUserId,jdbcType=BIGINT},
+      create_date = #{createDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <update id="updateOrderStatusByIdList">
+        update order_info set status = #{status}
+        where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    <update id="updateOrderStatusById">
+        update order_info set status = #{status},
+        modify_user_id = #{modifyUserId},
+        modify_date = now()
+        where id  = #{id}
+    </update>
+</mapper>

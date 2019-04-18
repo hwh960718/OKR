@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobvista.okr.repository.ScoreRuleRepository">
+    <resultMap id="BaseResultMap" type="com.mobvista.okr.domain.ScoreRule">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName"/>
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="score" jdbcType="INTEGER" property="score"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="trigger_mode" jdbcType="INTEGER" property="triggerMode"/>
+        <result column="valid_date_start" jdbcType="TIMESTAMP" property="validDateStart"/>
+        <result column="valid_date_end" jdbcType="TIMESTAMP" property="validDateEnd"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="modify_user_id" jdbcType="BIGINT" property="modifyUserId"/>
+        <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate"/>
+    </resultMap>
+
+
+    <resultMap id="DtoResultMap" type="com.mobvista.okr.dto.score.ScoreRuleDTO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName"/>
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="score" jdbcType="INTEGER" property="score"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="trigger_mode" jdbcType="INTEGER" property="triggerMode"/>
+        <result column="valid_date_start" jdbcType="TIMESTAMP" property="validDateStart"/>
+        <result column="valid_date_end" jdbcType="TIMESTAMP" property="validDateEnd"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="modify_user_id" jdbcType="BIGINT" property="modifyUserId"/>
+        <result column="modifyUserName" jdbcType="VARCHAR" property="modifyUserName"/>
+        <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, rule_name, rule_desc, type, score, status,trigger_mode,valid_date_start,valid_date_end, create_user_id, create_date,
+    modify_user_id, modify_date
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from score_rule
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="findByTriggerModelAndStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from score_rule
+        where trigger_mode = #{triggerModel} and status = #{status}
+    </select>
+    <select id="countPageByScoreRule" resultType="java.lang.Long">
+        select count(1) from score_rule
+        <where>
+            <if test="ruleName != null and ruleName != '' ">
+                and rule_name like CONCAT('%',#{ruleName,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="ruleDesc != null">
+                and rule_desc = #{ruleDesc,jdbcType=VARCHAR}
+            </if>
+            <if test="type != null and type > 0">
+                and type = #{type,jdbcType=TINYINT}
+            </if>
+            <if test="score != null">
+                and score = #{score,jdbcType=INTEGER}
+            </if>
+            <if test="status != null">
+                and status = #{status,jdbcType=TINYINT}
+            </if>
+            <if test="triggerMode != null">
+                and trigger_mode = #{triggerMode,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+    <select id="queryPageByScoreRule" resultMap="DtoResultMap">
+        select
+        sr.id, sr.rule_name, sr.rule_desc, sr.type, sr.score, sr.status,
+        sr.trigger_mode,sr.valid_date_start,sr.valid_date_end, sr.create_user_id,
+        sr.create_date,
+        sr.modify_user_id, sr.modify_date, u.real_name modifyUserName
+        from score_rule sr
+        inner join user_profile u on u.id = sr.modify_user_id
+        <where>
+            <if test="scoreRule.ruleName != null and scoreRule.ruleName != '' ">
+                and rule_name like CONCAT('%',#{scoreRule.ruleName,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="scoreRule.ruleDesc != null">
+                and rule_desc = #{scoreRule.ruleDesc,jdbcType=VARCHAR}
+            </if>
+            <if test="scoreRule.type != null  and scoreRule.type > 0">
+                and type = #{scoreRule.type,jdbcType=TINYINT}
+            </if>
+            <if test="scoreRule.score != null">
+                and score = #{scoreRule.score,jdbcType=INTEGER}
+            </if>
+            <if test="scoreRule.status != null">
+                and status = #{scoreRule.status,jdbcType=TINYINT}
+            </if>
+            <if test="scoreRule.triggerMode != null">
+                and trigger_mode = #{scoreRule.triggerMode,jdbcType=INTEGER}
+            </if>
+        </where>
+        limit #{start},#{size}
+    </select>
+    <select id="queryScoreRuleListByTriggerModeAndStatus" resultMap="DtoResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from score_rule where trigger_mode = #{triggerMode}
+        <if test="status !=null">
+            and status = #{status}
+        </if>
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from score_rule
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.mobvista.okr.domain.ScoreRule">
+    insert into score_rule (id, rule_name, rule_desc, 
+      type, score, status,
+      trigger_mode,valid_date_start,valid_date_end, create_user_id, create_date,
+      modify_user_id, modify_date)
+    values (#{id,jdbcType=BIGINT}, #{ruleName,jdbcType=VARCHAR}, #{ruleDesc,jdbcType=VARCHAR}, 
+      #{type,jdbcType=TINYINT}, #{score,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, 
+      #{triggerMode,jdbcType=INTEGER},#{validDateStart},#{validDateEnd} , #{createUserId,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP},
+      #{modifyUserId,jdbcType=BIGINT}, #{modifyDate,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="com.mobvista.okr.domain.ScoreRule">
+        insert into score_rule
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="ruleName != null">
+                rule_name,
+            </if>
+            <if test="ruleDesc != null">
+                rule_desc,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="score != null">
+                score,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="triggerMode != null">
+                trigger_mode,
+            </if>
+            <if test="createUserId != null">
+                create_user_id,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="modifyUserId != null">
+                modify_user_id,
+            </if>
+            <if test="modifyDate != null">
+                modify_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="ruleName != null">
+                #{ruleName,jdbcType=VARCHAR},
+            </if>
+            <if test="ruleDesc != null">
+                #{ruleDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=TINYINT},
+            </if>
+            <if test="score != null">
+                #{score,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="triggerMode != null">
+                #{triggerMode,jdbcType=INTEGER},
+            </if>
+            <if test="createUserId != null">
+                #{createUserId,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyUserId != null">
+                #{modifyUserId,jdbcType=BIGINT},
+            </if>
+            <if test="modifyDate != null">
+                #{modifyDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mobvista.okr.domain.ScoreRule">
+        update score_rule
+        <set>
+            <if test="ruleName != null">
+                rule_name = #{ruleName,jdbcType=VARCHAR},
+            </if>
+            <if test="ruleDesc != null">
+                rule_desc = #{ruleDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=TINYINT},
+            </if>
+            <if test="score != null">
+                score = #{score,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="triggerMode != null">
+                trigger_mode = #{triggerMode,jdbcType=INTEGER},
+            </if>
+            <if test="createUserId != null">
+                create_user_id = #{createUserId,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyUserId != null">
+                modify_user_id = #{modifyUserId,jdbcType=BIGINT},
+            </if>
+            <if test="modifyDate != null">
+                modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.mobvista.okr.domain.ScoreRule">
+    update score_rule
+    set rule_name = #{ruleName,jdbcType=VARCHAR},
+      rule_desc = #{ruleDesc,jdbcType=VARCHAR},
+      type = #{type,jdbcType=TINYINT},
+      score = #{score,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT},
+      trigger_mode = #{triggerMode,jdbcType=INTEGER},
+      create_user_id = #{createUserId,jdbcType=BIGINT},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      modify_user_id = #{modifyUserId,jdbcType=BIGINT},
+      modify_date = #{modifyDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <update id="updateExpiredRuleStatus">
+         update score_rule set status = #{newStatus,jdbcType=TINYINT}
+         where  <![CDATA[ valid_date_end <= #{expireDate}]]> and status=#{oldStatus}
+    </update>
+    <update id="updateEnableRuleStatus">
+         update score_rule set status = #{newStatus,jdbcType=TINYINT}
+         where  <![CDATA[ valid_date_start <= #{enableDate}]]> and status=#{oldStatus}
+    </update>
+</mapper>

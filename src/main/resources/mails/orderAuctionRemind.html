@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body style="padding: 30px">
+
+<p style="font-style: italic; font-weight: bold">
+    <a style="font-style: italic; font-weight: bold" th:text="| Dear ${orderEmailInfoDTO.createUserName} :|">Dear :</a>
+    <br/> &nbsp;&nbsp;&nbsp;&nbsp;
+    <a th:if="${success}"> 竞拍成功。具体信息如下： </a>
+    <a th:if="${!success}"> 很遗憾，您的出价积分已被超越。具体信息如下： </a>
+</p>
+
+<table>
+    <tr>
+        <td style="font-weight: bold">
+            商品信息：
+        </td>
+        <td>
+            <p style="font-style: italic; font-weight: bold" th:text="|  ${orderEmailInfoDTO.productName}|"></p>
+        </td>
+    </tr>
+    <tr>
+        <td style="font-weight: bold">
+            商品价值：
+        </td>
+        <td>
+            <p style="font-style: italic; font-weight: bold" th:text="|  ${orderEmailInfoDTO.productPrice} RMB|"></p>
+        </td>
+    </tr>
+    <tr>
+        <td style="font-weight: bold">
+            您的出价：
+        </td>
+        <td>
+            <p style="font-style: italic; font-weight: bold;color: #0012ff;"
+               th:text="|  ${#numbers.formatDecimal(orderEmailInfoDTO.price,0,'COMMA',0,'POINT')} 积分|"></p>
+        </td>
+    </tr>
+    <tr>
+        <td style="font-weight: bold">
+            当前出价：
+        </td>
+        <td>
+            <p style="font-style: italic; font-weight: bold;color:red;"
+               th:text="|  ${#numbers.formatDecimal(currentPrice,0,'COMMA',0,'POINT')} 积分|"></p>
+        </td>
+    </tr>
+    <hr/>
+</table>
+
+
+</body>
+</html>

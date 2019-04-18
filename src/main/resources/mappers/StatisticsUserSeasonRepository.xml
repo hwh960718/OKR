@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mobvista.okr.repository.StatisticsUserSeasonRepository">
+    <select id="getUserAssessCountTop10"
+            resultType="com.mobvista.okr.dto.StatisticsUserSeasonCountDTO">
+            SELECT
+                up.id as userId,
+                up.real_name as userName,
+                up.rank as userRank,
+                s.assessCount,
+                s.assessorUsers
+            FROM
+                user_profile up
+                INNER JOIN (
+            SELECT
+                count( 1 ) assessCount,
+                GROUP_CONCAT( u.real_name ) assessorUsers,
+                us.user_id
+            FROM
+                assess_task ast
+                INNER JOIN user_profile u ON ast.assessor_id = u.id
+                INNER JOIN user_season us on ast.user_season_id = us.id
+            WHERE
+                us.season_id = #{seasonId}
+            GROUP BY
+                us.user_id
+            ORDER BY
+                assessCount DESC
+                LIMIT 10
+                ) s ON s.user_id = up.id
+            ORDER BY
+                s.assessCount DESC
+
+    </select>
+</mapper>

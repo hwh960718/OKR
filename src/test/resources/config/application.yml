@@ -1,0 +1,87 @@
+spring:
+  profiles:
+    active: local
+  redis:
+    host: 52.76.20.166
+    port: 6379
+    pool:
+      max-active: 100
+      max-idle: 20
+      min-idle: 10
+      max-wait: -1
+    timeout: 2000
+  datasource:
+    url: jdbc:mysql://52.76.20.166:3306/okr_dev?useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+  #    jpa:
+  #        database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  #        database: MYSQL
+  #        show-sql: true
+  #        properties:
+  #            hibernate.id.new_generator_mappings: true
+  #            hibernate.cache.use_second_level_cache: false
+  #            hibernate.cache.use_query_cache: false
+  #            hibernate.generate_statistics: true
+  token:
+    secret: 48b0d7b6fa5e9b814f3000f9163b4cb6249e7043
+    token-validity-in-seconds: 7200
+    token-validity-in-seconds-for-remember-me: 2592000
+  thymeleaf:
+    mode: XHTML
+    prefix: classpath:/mails/
+  http:
+    multipart:
+      max-file-size: 50mb
+      max-request-size: 50mb
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+  messages:
+    basename: i18n/messages
+server:
+  port: 8888
+
+#mybatis
+mybatis:
+  mapper-locations: classpath*:mappers/*.xml
+  type-aliases-package: com.mobvista.okr.domain
+
+# 账号中心
+acs:
+  accountDomain: https://test-accounts.mobvista.com
+  clientId: 1025
+  clientSecret: 233d98aed93824d1b48e43d34fce904b
+
+# restTemplate 配置
+rest:
+  readTimeout: 5000
+  connectTimeout: 15000
+
+# qiniu
+qiniu:
+  bucket: mbokr-test
+  host: p2p65xlrl.bkt.clouddn.com
+  ak: LrHnIm0v1SUQ_n6VtQbDLOnC4Bg8bXk86Af9A18b
+  sk: FNuk3DUAcYz3CpPAZ_hcKYnO54HaBrDqlrLYvY3L
+
+#邮箱配置
+mail:
+  host: email-smtp.us-east-1.amazonaws.com
+  sender: okr-support@mobvista.com
+  senderName: OKR
+  userName: AKIAJTMG4ABDYRFLW6XA
+  password: AqaqDrqJ0vZKbKcRgP7rJRwQyJE5Y38+9kyR5XYHGZNX
+  port: 25
+  receiveMailAddress: wei.gu@mobvista.com
+  tempFilePath: /tmp/
+  test: true
+  emailEnable: true
+
+application:
+  initSecret: okrOKR2018
+  name: okr-service
+  host: http://okr.mobvista.com
+  cookieDomain: okr.mobvista.com
+  checkOrderPassword: false

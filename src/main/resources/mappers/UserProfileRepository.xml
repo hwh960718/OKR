@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobvista.okr.repository.UserProfileRepository">
+    <resultMap id="BaseResultMap" type="com.mobvista.okr.domain.UserProfile">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="real_name" jdbcType="VARCHAR" property="realName"/>
+        <result column="department_id" jdbcType="BIGINT" property="departmentId"/>
+        <result column="leader_id" jdbcType="BIGINT" property="leaderId"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="job_name" jdbcType="VARCHAR" property="jobName"/>
+        <result column="profile_photo" jdbcType="VARCHAR" property="profilePhoto"/>
+        <result column="workplace" jdbcType="VARCHAR" property="workplace"/>
+        <result column="rank" jdbcType="VARCHAR" property="rank"/>
+        <result column="gender" jdbcType="TINYINT" property="gender"/>
+        <result column="college" jdbcType="VARCHAR" property="college"/>
+        <result column="major" jdbcType="VARCHAR" property="major"/>
+        <result column="degree" jdbcType="VARCHAR" property="degree"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="entry_time" jdbcType="TIMESTAMP" property="entryTime"/>
+        <result column="leaving_time" jdbcType="TIMESTAMP" property="leavingTime"/>
+        <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, user_name, real_name, department_id, leader_id, email, job_name, profile_photo,
+    workplace, rank, gender, college, major, degree, status, entry_time, leaving_time,
+    last_modified_date
+  </sql>
+    <sql id="Base_Column_List_AS_U">
+    u.id, u.user_name, u.real_name, u.department_id, u.leader_id, u.email, u.job_name, u.profile_photo,
+    u.workplace, u.rank, u.gender, u.college, u.major, u.degree, u.status, u.entry_time, u.leaving_time,
+    u.last_modified_date
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_profile
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="findAllBySeasonId" resultType="java.lang.Long">
+        SELECT u.id
+        FROM user_profile u
+        INNER JOIN user_season us ON us.user_id=u.id
+        WHERE us.season_id = #{seasonId}
+    </select>
+    <select id="findAllByIdIn" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List_AS_U"/>
+        FROM user_profile u
+        where u.id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+    <select id="findAllByDepartmentIdIn" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List_AS_U"/>
+        FROM user_profile u
+        where u.department_id in
+        <foreach collection="list" item="deptId" open="(" close=")" separator=",">
+            #{deptId}
+        </foreach>
+    </select>
+    <select id="countAllByName" resultType="java.lang.Long">
+        SELECT count(1) FROM
+        user_profile u
+        INNER JOIN department d ON u.department_id = d.id
+        WHERE
+        u.`status` !=4
+        and ( u.real_name LIKE CONCAT('%',#{name},'%') OR u.rank LIKE CONCAT('%',#{name},'%') OR d.NAME LIKE
+        CONCAT('%',#{name},'%') OR u.email LIKE CONCAT('%',#{name},'%'))
+        and d.id in
+        <foreach collection="depIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <select id="queryAllByName" resultType="com.mobvista.okr.dto.UserInfoDTO">
+        SELECT
+        u.id,
+        u.email,
+        u.STATUS STATUS,
+        u.profile_photo profilePhoto,
+        u.job_name jobName,
+        u.rank rank,
+        u.real_name realName,
+        u.gender,
+        u.leader_id leaderId,
+        u.department_id departmentId,
+        d.NAME departmentName
+        FROM
+        user_profile u
+        INNER JOIN department d ON u.department_id = d.id
+        WHERE
+        u.`status` !=4
+        and ( u.real_name LIKE CONCAT('%',#{name},'%') OR u.rank LIKE CONCAT('%',#{name},'%') OR d.NAME LIKE
+        CONCAT('%',#{name},'%') OR u.email LIKE CONCAT('%',#{name},'%'))
+        and d.id in
+        <foreach collection="depIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        LIMIT #{start},#{size}
+    </select>
+    <select id="queryAllByAdjusterUser" resultType="com.mobvista.okr.dto.UserInfoDTO">
+        SELECT
+        u.id,
+        u.email,
+        u.`status` `status`,
+        u.profile_photo profilePhoto,
+        u.job_name jobName,
+        u.rank rank,
+        u.real_name realName,
+        u.gender,
+        u.leader_id leaderId,
+        u.department_id departmentId,
+        d.`name` departmentName,
+        ! ISNULL( a.id ) selected
+        FROM
+        user_profile u
+        INNER JOIN department d ON u.department_id = d.id
+        INNER JOIN user_season us ON us.user_id = u.id
+        AND us.season_id = #{seasonId}
+        LEFT JOIN adjuster a ON us.id = a.user_season_id
+        AND a.adjuster_id = #{userId}
+        WHERE
+        u.`status` !=4
+        AND u.id !=#{userId}
+        AND ( u.real_name LIKE CONCAT('%',#{name},'%') OR u.rank LIKE CONCAT('%',#{name},'%') OR d.NAME LIKE
+        CONCAT('%',#{name},'%') OR u.email LIKE CONCAT('%',#{name},'%') )
+        AND u.department_id IN
+        <foreach collection="depIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        LIMIT #{start},#{size}
+
+    </select>
+    <select id="countAllByAdjusterUser" resultType="java.lang.Long">
+        SELECT count(1) FROM
+        user_profile u
+        INNER JOIN department d ON u.department_id = d.id
+        INNER JOIN user_season us ON us.user_id = u.id
+        AND us.season_id = #{seasonId}
+        LEFT JOIN adjuster a ON us.id = a.user_season_id
+        AND a.adjuster_id = #{userId}
+        WHERE
+        u.`status` !=4
+        AND u.id !=#{userId}
+        AND ( u.real_name LIKE CONCAT('%',#{name},'%') OR u.rank LIKE CONCAT('%',#{name},'%') OR d.NAME LIKE
+        CONCAT('%',#{name},'%') OR u.email LIKE CONCAT('%',#{name},'%') )
+        AND u.department_id IN
+        <foreach collection="depIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM user_profile
+    </select>
+    <select id="findAllByDepartmentIdInExceptInvalidUser" resultType="java.lang.Long">
+        SELECT
+        u.id
+        FROM user_profile u
+        where u.`status` !=4
+        <if test="list!=null">
+            and u.department_id in
+            <foreach collection="list" item="deptId" open="(" close=")" separator=",">
+                #{deptId}
+            </foreach>
+        </if>
+    </select>
+    <select id="findUserDetailByIdIn" resultType="com.mobvista.okr.dto.UserInfoDTO">
+        SELECT
+        u.id,
+        u.email,
+        u.`status` `status`,
+        u.profile_photo profilePhoto,
+        u.job_name jobName,
+        u.rank rank,
+        u.real_name realName,
+        u.gender,
+        u.leader_id leaderId,
+        u.department_id departmentId,
+        d.`name` departmentName
+        FROM
+        user_profile u
+        INNER JOIN department d ON u.department_id = d.id
+        WHERE u.id IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="countAllByUserNameAndSeasonId" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM
+        user_season us
+        INNER JOIN user_profile u ON us.user_id = u.id
+        WHERE us.season_id =#{seasonId}
+        <if test="name !=null">
+            AND u.real_name LIKE CONCAT('%',#{name},'%')
+        </if>
+    </select>
+    <select id="queryAllByUserNameAndSeasonId" resultType="com.mobvista.okr.dto.SeasonUserDTO">
+        SELECT
+        us.id userSeasonId,
+        u.id userId,
+        u.real_name userName,
+        u.rank,
+        u.gender,
+        d.`name` departmentName
+        FROM
+        user_season us
+        INNER JOIN user_profile u ON us.user_id = u.id
+        INNER JOIN department d ON d.id = u.department_id
+        WHERE us.season_id =#{seasonId}
+        <if test="name !=null">
+            AND u.real_name LIKE CONCAT('%',#{name},'%')
+        </if>
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user_profile
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.mobvista.okr.domain.UserProfile">
+    insert into user_profile (id, user_name, real_name, 
+      department_id, leader_id, email, 
+      job_name, profile_photo, workplace, 
+      rank, gender, college, 
+      major, degree, status, 
+      entry_time, leaving_time, last_modified_date
+      )
+    values (#{id,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR}, 
+      #{departmentId,jdbcType=BIGINT}, #{leaderId,jdbcType=BIGINT}, #{email,jdbcType=VARCHAR}, 
+      #{jobName,jdbcType=VARCHAR}, #{profilePhoto,jdbcType=VARCHAR}, #{workplace,jdbcType=VARCHAR}, 
+      #{rank,jdbcType=VARCHAR}, #{gender,jdbcType=TINYINT}, #{college,jdbcType=VARCHAR}, 
+      #{major,jdbcType=VARCHAR}, #{degree,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
+      #{entryTime,jdbcType=TIMESTAMP}, #{leavingTime,jdbcType=TIMESTAMP}, #{lastModifiedDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.mobvista.okr.domain.UserProfile">
+        insert into user_profile
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="realName != null">
+                real_name,
+            </if>
+            <if test="departmentId != null">
+                department_id,
+            </if>
+            <if test="leaderId != null">
+                leader_id,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="jobName != null">
+                job_name,
+            </if>
+            <if test="profilePhoto != null">
+                profile_photo,
+            </if>
+            <if test="workplace != null">
+                workplace,
+            </if>
+            <if test="rank != null">
+                rank,
+            </if>
+            <if test="gender != null">
+                gender,
+            </if>
+            <if test="college != null">
+                college,
+            </if>
+            <if test="major != null">
+                major,
+            </if>
+            <if test="degree != null">
+                degree,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="entryTime != null">
+                entry_time,
+            </if>
+            <if test="leavingTime != null">
+                leaving_time,
+            </if>
+            <if test="lastModifiedDate != null">
+                last_modified_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="realName != null">
+                #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="departmentId != null">
+                #{departmentId,jdbcType=BIGINT},
+            </if>
+            <if test="leaderId != null">
+                #{leaderId,jdbcType=BIGINT},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="jobName != null">
+                #{jobName,jdbcType=VARCHAR},
+            </if>
+            <if test="profilePhoto != null">
+                #{profilePhoto,jdbcType=VARCHAR},
+            </if>
+            <if test="workplace != null">
+                #{workplace,jdbcType=VARCHAR},
+            </if>
+            <if test="rank != null">
+                #{rank,jdbcType=VARCHAR},
+            </if>
+            <if test="gender != null">
+                #{gender,jdbcType=TINYINT},
+            </if>
+            <if test="college != null">
+                #{college,jdbcType=VARCHAR},
+            </if>
+            <if test="major != null">
+                #{major,jdbcType=VARCHAR},
+            </if>
+            <if test="degree != null">
+                #{degree,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="entryTime != null">
+                #{entryTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="leavingTime != null">
+                #{leavingTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastModifiedDate != null">
+                #{lastModifiedDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <insert id="saveList">
+        insert into user_profile (id, user_name, real_name,
+        department_id, leader_id, email,
+        job_name, profile_photo, workplace,
+        rank, gender, college,
+        major, degree, status,
+        entry_time, leaving_time, last_modified_date
+        )
+        values
+        <foreach collection="list" item="po" separator=",">
+            (#{po.id,jdbcType=BIGINT}, #{po.userName,jdbcType=VARCHAR}, #{po.realName,jdbcType=VARCHAR},
+            #{po.departmentId,jdbcType=BIGINT}, #{po.leaderId,jdbcType=BIGINT}, #{po.email,jdbcType=VARCHAR},
+            #{po.jobName,jdbcType=VARCHAR}, #{po.profilePhoto,jdbcType=VARCHAR}, #{po.workplace,jdbcType=VARCHAR},
+            #{po.rank,jdbcType=VARCHAR}, #{po.gender,jdbcType=TINYINT}, #{po.college,jdbcType=VARCHAR},
+            #{po.major,jdbcType=VARCHAR}, #{po.degree,jdbcType=VARCHAR}, #{po.status,jdbcType=TINYINT},
+            #{po.entryTime,jdbcType=TIMESTAMP}, #{po.leavingTime,jdbcType=TIMESTAMP},
+            #{po.lastModifiedDate,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mobvista.okr.domain.UserProfile">
+        update user_profile
+        <set>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="realName != null">
+                real_name = #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="departmentId != null">
+                department_id = #{departmentId,jdbcType=BIGINT},
+            </if>
+            <if test="leaderId != null">
+                leader_id = #{leaderId,jdbcType=BIGINT},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="jobName != null">
+                job_name = #{jobName,jdbcType=VARCHAR},
+            </if>
+            <if test="profilePhoto != null">
+                profile_photo = #{profilePhoto,jdbcType=VARCHAR},
+            </if>
+            <if test="workplace != null">
+                workplace = #{workplace,jdbcType=VARCHAR},
+            </if>
+            <if test="rank != null">
+                rank = #{rank,jdbcType=VARCHAR},
+            </if>
+            <if test="gender != null">
+                gender = #{gender,jdbcType=TINYINT},
+            </if>
+            <if test="college != null">
+                college = #{college,jdbcType=VARCHAR},
+            </if>
+            <if test="major != null">
+                major = #{major,jdbcType=VARCHAR},
+            </if>
+            <if test="degree != null">
+                degree = #{degree,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="entryTime != null">
+                entry_time = #{entryTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="leavingTime != null">
+                leaving_time = #{leavingTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastModifiedDate != null">
+                last_modified_date = #{lastModifiedDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.mobvista.okr.domain.UserProfile">
+    update user_profile
+    set user_name = #{userName,jdbcType=VARCHAR},
+      real_name = #{realName,jdbcType=VARCHAR},
+      department_id = #{departmentId,jdbcType=BIGINT},
+      leader_id = #{leaderId,jdbcType=BIGINT},
+      email = #{email,jdbcType=VARCHAR},
+      job_name = #{jobName,jdbcType=VARCHAR},
+      profile_photo = #{profilePhoto,jdbcType=VARCHAR},
+      workplace = #{workplace,jdbcType=VARCHAR},
+      rank = #{rank,jdbcType=VARCHAR},
+      gender = #{gender,jdbcType=TINYINT},
+      college = #{college,jdbcType=VARCHAR},
+      major = #{major,jdbcType=VARCHAR},
+      degree = #{degree,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      entry_time = #{entryTime,jdbcType=TIMESTAMP},
+      leaving_time = #{leavingTime,jdbcType=TIMESTAMP},
+      last_modified_date = #{lastModifiedDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <update id="updateList">
+        update user_profile
+        <set>
+            user_name=
+            <foreach collection="list" item="item" index="index"
+                     separator=" " open="( case id" close="end )">
+                when #{item.id} then #{item.userName}
+            </foreach>,
+            real_name=
+            <foreach collection="list" item="item" index="index"
+                     separator=" " open="( case id" close="end )">
+                when #{item.id} then #{item.realName}
+            </foreach>,
+            rank=
+            <foreach collection="list" item="item" index="index"
+                     separator=" " open="( case id" close="end )">
+                when #{item.id} then #{item.rank}
+            </foreach>,
+            gender=
+            <foreach collection="list" item="item" index="index"
+                     separator=" " open="( case id" close="end )">
+                when #{item.id} then #{item.gender}
+            </foreach>,
+            degree=
+            <foreach collection="list" item="item" index="index"
+                     separator=" " open="( case id" close="end )">
+                when #{item.id} then #{item.degree}
+            </foreach>,
+            college=
+            <foreach collection="list" item="item" index="index"
+                     separator=" " open="( case id" close="end )">
+                when #{item.id} then #{item.college}
+            </foreach>,
+            major=
+            <foreach collection="list" item="item" index="index"
+                     separator=" " open="( case id" close="end )">
+                when #{item.id} then #{item.major}
+            </foreach>,
+            status=
+            <foreach collection="list" item="item" index="index"
+                     separator=" " open="( case id" close="end )">
+                when #{item.id} then #{item.status}
+            </foreach>,
+            workplace=
+            <foreach collection="list" item="item" index="index"
+                     separator=" " open="( case id" close="end )">
+                when #{item.id} then #{item.workplace}
+            </foreach>
+        </set>
+        where id in
+        <foreach collection="list" index="index" item="item"
+                 separator="," open="(" close=")">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+    <update id="updateListPicture">
+        update user_profile
+        <set>
+            profile_photo=
+            <foreach collection="list" item="item" index="index"
+                     separator=" " open="( case id" close="end )">
+                when #{item.id} then #{item.profilePhoto}
+            </foreach>
+        </set>
+        where id in
+        <foreach collection="list" index="index" item="item"
+                 separator="," open="(" close=")">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+</mapper>

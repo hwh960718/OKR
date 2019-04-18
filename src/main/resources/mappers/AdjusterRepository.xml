@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobvista.okr.repository.AdjusterRepository">
+    <resultMap id="BaseResultMap" type="com.mobvista.okr.domain.Adjuster">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_season_id" jdbcType="BIGINT" property="userSeasonId"/>
+        <result column="adjuster_id" jdbcType="BIGINT" property="adjusterId"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, user_season_id, adjuster_id
+      </sql>
+    <sql id="Base_Column_List_AS_A">
+        a.id, a.user_season_id, a.adjuster_id
+      </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from adjuster
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <!--根据评价人id和考核id查询被评价人id-->
+    <select id="findUserIdByAdjusterIdAndSeasonId" resultType="java.lang.Long">
+      select us.user_id from adjuster a
+      inner join user_season us on a.user_season_id = us.id
+      where a.adjuster_id=#{adjusterId} and us.season_id = #{seasonId}
+    </select>
+    <select id="findOneByAdjusterIdAndUserSeasonId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from adjuster
+        where adjuster_id = #{adjusterId}
+        and user_season_id = #{userSeasonId}
+    </select>
+    <select id="countByUserSeasonIdExceptInvalidUser" resultType="java.lang.Long">
+      select COUNT(1) from adjuster a
+      INNER JOIN user_profile u ON a.adjuster_id = u.id AND u.`status`!=4
+      where a.user_season_id = #{userSeasonId}
+    </select>
+    <select id="countByAdjusterIdAndSeasonId" resultType="java.lang.Long">
+      select COUNT(1) from adjuster a
+      inner join user_season us on a.user_season_id = us.id
+      where a.adjuster_id=#{adjusterId} and us.season_id = #{seasonId}
+    </select>
+
+    <select id="findAllByUserSeasonIdExceptInvalidUser" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List_AS_A"/>
+        from adjuster a
+        inner join user_profile up on up.id = a.adjuster_id and up.status != 4
+        where user_season_id = #{userSeasonId,jdbcType=BIGINT}
+    </select>
+    <select id="querySelectedUsers" resultType="com.mobvista.okr.dto.UserInfoDTO">
+        SELECT
+        DISTINCT u.id,
+        u.real_name realName,
+        u.profile_photo profilePhoto,
+        u.email,
+        u.`status`,
+        u.job_name jobName,
+        u.rank,
+        u.gender,
+        u.leader_id leaderId,
+        d.id departmentId,
+        d.`name` departmentName
+        FROM
+        user_profile u
+        INNER JOIN user_season us ON us.user_id = u.id
+        INNER JOIN user_season us2 ON us2.season_id = us.season_id
+        INNER JOIN adjuster a ON us.id = a.user_season_id
+        INNER JOIN department d ON d.id = u.department_id
+        WHERE a.adjuster_id = #{userId}
+        <if test="userSeasonId!=null">
+            AND us2.id = #{userSeasonId}
+        </if>
+        <if test="userStatus !=null">
+            and u.`status` = #{userStatus}
+        </if>
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from adjuster
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <delete id="deleteByUserIdAndUserSeasonId">
+      delete a.* from adjuster a
+      inner JOIN user_season us ON us.id = a.user_season_id
+      inner JOIN user_season us2 ON us2.season_id = us.season_id and us2.user_id = a.adjuster_id
+      where us2.id = #{userSeasonId} AND us.user_id = #{userId}
+
+    </delete>
+    <insert id="insert" parameterType="com.mobvista.okr.domain.Adjuster" useGeneratedKeys="true" keyProperty="id">
+    insert into adjuster (id, user_season_id, adjuster_id)
+    values (#{id,jdbcType=BIGINT}, #{userSeasonId,jdbcType=BIGINT}, #{adjusterId,jdbcType=BIGINT})
+  </insert>
+    <insert id="insertSelective" parameterType="com.mobvista.okr.domain.Adjuster">
+        insert into adjuster
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userSeasonId != null">
+                user_season_id,
+            </if>
+            <if test="adjusterId != null">
+                adjuster_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="userSeasonId != null">
+                #{userSeasonId,jdbcType=BIGINT},
+            </if>
+            <if test="adjusterId != null">
+                #{adjusterId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <insert id="insertList">
+        insert into adjuster (id, user_season_id, adjuster_id)
+        values
+        <foreach collection="list" item="po" separator=",">
+            (#{po.id,jdbcType=BIGINT}, #{po.userSeasonId,jdbcType=BIGINT}, #{po.adjusterId,jdbcType=BIGINT})
+        </foreach>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mobvista.okr.domain.Adjuster">
+        update adjuster
+        <set>
+            <if test="userSeasonId != null">
+                user_season_id = #{userSeasonId,jdbcType=BIGINT},
+            </if>
+            <if test="adjusterId != null">
+                adjuster_id = #{adjusterId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.mobvista.okr.domain.Adjuster">
+    update adjuster
+    set user_season_id = #{userSeasonId,jdbcType=BIGINT},
+      adjuster_id = #{adjusterId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

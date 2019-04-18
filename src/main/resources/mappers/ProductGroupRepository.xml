@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobvista.okr.repository.ProductGroupRepository">
+    <resultMap id="BaseResultMap" type="com.mobvista.okr.domain.ProductGroup">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="group_product_id" jdbcType="BIGINT" property="groupProductId"/>
+        <result column="product_id" jdbcType="BIGINT" property="productId"/>
+        <result column="group_count" jdbcType="INTEGER" property="groupCount"/>
+    </resultMap>
+
+    <resultMap id="dtoBaseResultMap" type="com.mobvista.okr.dto.product.ProductGroupDTO">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="productName"/>
+        <result column="group_product_id" jdbcType="BIGINT" property="groupProductId"/>
+        <result column="product_id" jdbcType="BIGINT" property="productId"/>
+        <result column="group_count" jdbcType="INTEGER" property="groupCount"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, group_product_id, product_id, group_count
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from product_group
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="countIsGroupProductChild" resultType="java.lang.Integer">
+        select count(1) from product_group where product_id = #{productId}
+    </select>
+    <select id="queryProductListByGroupId" resultMap="dtoBaseResultMap">
+          select
+            p.name,
+            pg.*
+          from  product_group pg
+          inner join  product p on pg.product_id = p.id
+        where group_product_id = #{groupProductId}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from product_group
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <delete id="deleteByGroupProductId">
+        delete from  product_group
+        where group_product_id = #{groupProductId}
+    </delete>
+    <insert id="insert" parameterType="com.mobvista.okr.domain.ProductGroup">
+    insert into product_group (id, group_product_id, product_id, 
+      group_count)
+    values (#{id,jdbcType=INTEGER}, #{groupProductId,jdbcType=BIGINT}, #{productId,jdbcType=BIGINT}, 
+      #{groupCount,jdbcType=INTEGER})
+  </insert>
+    <insert id="insertSelective" parameterType="com.mobvista.okr.domain.ProductGroup">
+        insert into product_group
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="groupProductId != null">
+                group_product_id,
+            </if>
+            <if test="productId != null">
+                product_id,
+            </if>
+            <if test="groupCount != null">
+                group_count,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="groupProductId != null">
+                #{groupProductId,jdbcType=BIGINT},
+            </if>
+            <if test="productId != null">
+                #{productId,jdbcType=BIGINT},
+            </if>
+            <if test="groupCount != null">
+                #{groupCount,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <insert id="insertList">
+        insert into product_group (id, group_product_id, product_id,
+        group_count)
+        values
+        <foreach collection="list" item="po" separator=",">
+            (#{po.id,jdbcType=INTEGER}, #{groupProductId,jdbcType=BIGINT}, #{po.productId,jdbcType=BIGINT},
+            #{po.groupCount,jdbcType=INTEGER})
+        </foreach>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mobvista.okr.domain.ProductGroup">
+        update product_group
+        <set>
+            <if test="groupProductId != null">
+                group_product_id = #{groupProductId,jdbcType=BIGINT},
+            </if>
+            <if test="productId != null">
+                product_id = #{productId,jdbcType=BIGINT},
+            </if>
+            <if test="groupCount != null">
+                group_count = #{groupCount,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.mobvista.okr.domain.ProductGroup">
+    update product_group
+    set group_product_id = #{groupProductId,jdbcType=BIGINT},
+      product_id = #{productId,jdbcType=BIGINT},
+      group_count = #{groupCount,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

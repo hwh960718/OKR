@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobvista.okr.repository.ScoreUserDetailRepository">
+    <resultMap id="BaseResultMap" type="com.mobvista.okr.domain.ScoreUserDetail">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="score" jdbcType="BIGINT" property="score"/>
+        <result column="rule_id" jdbcType="BIGINT" property="ruleId"/>
+        <result column="related_id" jdbcType="BIGINT" property="relatedId"/>
+        <result column="related_flag" jdbcType="VARCHAR" property="relatedFlag"/>
+        <result column="related_desc" jdbcType="VARCHAR" property="relatedDesc"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+    </resultMap>
+
+
+    <resultMap id="DtoResultMap" type="com.mobvista.okr.dto.score.ScoreUserDetailDTO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="real_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="score" jdbcType="BIGINT" property="score"/>
+        <result column="rule_id" jdbcType="BIGINT" property="ruleId"/>
+        <result column="related_id" jdbcType="BIGINT" property="relatedId"/>
+        <result column="related_flag" jdbcType="VARCHAR" property="relatedFlag"/>
+        <result column="related_desc" jdbcType="VARCHAR" property="relatedDesc"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, user_id, type, score, rule_id, related_id, related_flag, related_desc, create_user_id, 
+    create_date
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from score_user_detail
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="countPageByScoreUserDetail" resultType="java.lang.Long">
+        select
+        count(1)
+        from score_user_detail
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId,jdbcType=BIGINT}
+            </if>
+            <if test="type != null">
+                and type = #{type,jdbcType=TINYINT}
+            </if>
+            <if test="ruleId != null">
+                and rule_id = #{ruleId,jdbcType=BIGINT}
+            </if>
+            <if test="relatedId != null">
+                and related_id = #{relatedId,jdbcType=BIGINT}
+            </if>
+            <if test="relatedDesc != null">
+                and related_desc = #{relatedDesc,jdbcType=VARCHAR}
+            </if>
+
+        </where>
+    </select>
+    <select id="queryPageByScoreUserDetail" resultMap="DtoResultMap">
+        select
+        sud.id, sud.user_id, sud.type, sud.score, sud.rule_id,
+        sud.related_id, sud.related_flag, sud.related_desc,
+        sud.create_user_id,
+        sud.create_date,
+        u.real_name
+        from score_user_detail sud
+        inner join user_profile u on sud.user_id = u.id
+        <where>
+            <if test="scoreUserDetail.userId != null">
+                and user_id = #{scoreUserDetail.userId,jdbcType=BIGINT}
+            </if>
+            <if test="scoreUserDetail.type != null">
+                and type = #{scoreUserDetail.type,jdbcType=TINYINT}
+            </if>
+            <if test="scoreUserDetail.ruleId != null">
+                and rule_id = #{scoreUserDetail.ruleId,jdbcType=BIGINT}
+            </if>
+            <if test="scoreUserDetail.relatedId != null">
+                and related_id = #{scoreUserDetail.relatedId,jdbcType=BIGINT}
+            </if>
+            <if test="scoreUserDetail.relatedDesc != null">
+                and related_desc = #{scoreUserDetail.relatedDesc,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit #{start},#{size}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from score_user_detail
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.mobvista.okr.domain.ScoreUserDetail">
+    insert into score_user_detail (id, user_id, type, 
+      score, rule_id, related_id, 
+      related_flag, related_desc, create_user_id, 
+      create_date)
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{type,jdbcType=TINYINT}, 
+      #{score,jdbcType=BIGINT}, #{ruleId,jdbcType=BIGINT}, #{relatedId,jdbcType=BIGINT}, 
+      #{relatedFlag,jdbcType=VARCHAR}, #{relatedDesc,jdbcType=VARCHAR}, #{createUserId,jdbcType=BIGINT}, 
+      #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="com.mobvista.okr.domain.ScoreUserDetail">
+        insert into score_user_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="score != null">
+                score,
+            </if>
+            <if test="ruleId != null">
+                rule_id,
+            </if>
+            <if test="relatedId != null">
+                related_id,
+            </if>
+            <if test="relatedFlag != null">
+                related_flag,
+            </if>
+            <if test="relatedDesc != null">
+                related_desc,
+            </if>
+            <if test="createUserId != null">
+                create_user_id,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=TINYINT},
+            </if>
+            <if test="score != null">
+                #{score,jdbcType=BIGINT},
+            </if>
+            <if test="ruleId != null">
+                #{ruleId,jdbcType=BIGINT},
+            </if>
+            <if test="relatedId != null">
+                #{relatedId,jdbcType=BIGINT},
+            </if>
+            <if test="relatedFlag != null">
+                #{relatedFlag,jdbcType=VARCHAR},
+            </if>
+            <if test="relatedDesc != null">
+                #{relatedDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="createUserId != null">
+                #{createUserId,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <insert id="insertList">
+        insert into score_user_detail (id, user_id, type,
+        score, rule_id, related_id,
+        related_flag, related_desc, create_user_id,
+        create_date)
+        values
+        <foreach collection="list" item="po" separator=",">
+            (#{po.id,jdbcType=BIGINT}, #{po.userId,jdbcType=BIGINT}, #{po.type,jdbcType=TINYINT},
+            #{po.score,jdbcType=BIGINT}, #{po.ruleId,jdbcType=BIGINT}, #{po.relatedId,jdbcType=BIGINT},
+            #{po.relatedFlag,jdbcType=VARCHAR}, #{po.relatedDesc,jdbcType=VARCHAR}, #{po.createUserId,jdbcType=BIGINT},
+            #{po.createDate,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mobvista.okr.domain.ScoreUserDetail">
+        update score_user_detail
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=TINYINT},
+            </if>
+            <if test="score != null">
+                score = #{score,jdbcType=BIGINT},
+            </if>
+            <if test="ruleId != null">
+                rule_id = #{ruleId,jdbcType=BIGINT},
+            </if>
+            <if test="relatedId != null">
+                related_id = #{relatedId,jdbcType=BIGINT},
+            </if>
+            <if test="relatedFlag != null">
+                related_flag = #{relatedFlag,jdbcType=VARCHAR},
+            </if>
+            <if test="relatedDesc != null">
+                related_desc = #{relatedDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="createUserId != null">
+                create_user_id = #{createUserId,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.mobvista.okr.domain.ScoreUserDetail">
+    update score_user_detail
+    set user_id = #{userId,jdbcType=BIGINT},
+      type = #{type,jdbcType=TINYINT},
+      score = #{score,jdbcType=BIGINT},
+      rule_id = #{ruleId,jdbcType=BIGINT},
+      related_id = #{relatedId,jdbcType=BIGINT},
+      related_flag = #{relatedFlag,jdbcType=VARCHAR},
+      related_desc = #{relatedDesc,jdbcType=VARCHAR},
+      create_user_id = #{createUserId,jdbcType=BIGINT},
+      create_date = #{createDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

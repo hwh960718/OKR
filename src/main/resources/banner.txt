@@ -1,0 +1,11 @@
+
+  ${AnsiColor.BRIGHT_MAGENTA}                  _          _     _ _           ${AnsiColor.GREEN}         _
+  ${AnsiColor.BRIGHT_MAGENTA}                 | |        (_)   (_) |          ${AnsiColor.GREEN}        | |
+  ${AnsiColor.BRIGHT_MAGENTA}  _ __ ___   ___ | |____   ___ ___ _| |_ __ _    ${AnsiColor.GREEN}    ___ | | ___ __
+  ${AnsiColor.BRIGHT_MAGENTA} | '_ ` _ \ / _ \| '_ \ \ / / / __| | __/ _` |   ${AnsiColor.GREEN}   / _ \| |/ / '__|
+  ${AnsiColor.BRIGHT_MAGENTA} | | | | | | (_) | |_) \ V /| \__ \ | || (_| |   ${AnsiColor.GREEN}  | (_) |   <| |
+  ${AnsiColor.BRIGHT_MAGENTA} |_| |_| |_|\___/|_.__/ \_/ |_|___/_|\__\__,_|   ${AnsiColor.GREEN}   \___/|_|\_\_|
+  ${AnsiColor.BRIGHT_MAGENTA}                                                 ${AnsiColor.GREEN}
+
+${AnsiColor.BRIGHT_BLUE}::  🤓  :: Running Spring Boot ${spring-boot.version} ::
+:: mobvista 由crm项目组开发 ::${AnsiColor.DEFAULT}

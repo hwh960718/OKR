@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobvista.okr.repository.UserSeasonCommentTopRepository">
+    <resultMap id="BaseResultMap" type="com.mobvista.okr.domain.UserSeasonCommentTop">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="comment_id" jdbcType="BIGINT" property="commentId"/>
+        <result column="created_date" jdbcType="TIMESTAMP" property="createdDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, user_id, comment_id, created_date
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_season_comment_top
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="countByUserIdAndCommentId" resultType="java.lang.Long">
+        select count(1) from user_season_comment_top
+        where user_id = #{userId} and comment_id = #{commentId}
+    </select>
+    <select id="findAllByUserIdAndCommentIdIn" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_season_comment_top
+        where user_id = #{userId} and comment_id in
+        <foreach collection="commentIds" open="(" separator="," close=")" item="id" index="index">
+            #{id}
+        </foreach>
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user_season_comment_top
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.mobvista.okr.domain.UserSeasonCommentTop">
+    insert into user_season_comment_top (id, user_id, comment_id, 
+      created_date)
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{commentId,jdbcType=BIGINT}, 
+      #{createdDate,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="com.mobvista.okr.domain.UserSeasonCommentTop">
+        insert into user_season_comment_top
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="commentId != null">
+                comment_id,
+            </if>
+            <if test="createdDate != null">
+                created_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="commentId != null">
+                #{commentId,jdbcType=BIGINT},
+            </if>
+            <if test="createdDate != null">
+                #{createdDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mobvista.okr.domain.UserSeasonCommentTop">
+        update user_season_comment_top
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="commentId != null">
+                comment_id = #{commentId,jdbcType=BIGINT},
+            </if>
+            <if test="createdDate != null">
+                created_date = #{createdDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.mobvista.okr.domain.UserSeasonCommentTop">
+    update user_season_comment_top
+    set user_id = #{userId,jdbcType=BIGINT},
+      comment_id = #{commentId,jdbcType=BIGINT},
+      created_date = #{createdDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

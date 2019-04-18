@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:text="${seasonTitle}">JHipster</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    </head>
+    <body style="padding: 30px">
+    <p style="font-style: italic; font-weight: bold" th:text="|Dear ${user.realName}:|">
+            Dear Jhipster:
+        </p>
+        <p style="margin-top: 40px; text-indent: 2rem; font-size: 1rem;">
+            <span th:text="|【${seasonTitle}】|">【2000年第一季度】</span>的考核已经完成，最终得分：<span th:text="${seasonScore}" style="font-size: 1.5rem; font-weight: bold; color: red">100</span>，请尽快登陆OKR系统，点击我的考核，查看季度考核结果!
+        </p>
+        <p style="margin: 60px; text-align: center; font-size: .8rem">
+          <a style="padding: 5px 10px; border: #666666 1px solid" th:href="@{|${baseUrl}/#/user_season/index|}">立即查看季度考核结果</a>
+        </p>
+        <p style="text-align: right; font-size: .8rem; font-style: italic; color: #6e6e6e">
+            <span>Mobvista OKR System</span>
+        </p>
+    </body>
+</html>
